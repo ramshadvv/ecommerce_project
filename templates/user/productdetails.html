@@ -1,0 +1,174 @@
+{% extends 'user/userbase.html' %}
+{% block content %}
+<!-- Open Content -->
+<section class="">
+    <div class="container pb-5 d-flex">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 mt-5 ">
+                <div class="card" id="div-card" style="width: 28rem; height: 24rem;">
+                    <div id="main_image" class="pt-5">
+                        <img src="{{ thisProduct.image.url }}" alt="Card image cap" id="product-detail">
+                    </div>
+                </div>
+
+                <div class="row pt-5">
+                    <!--Start Controls-->
+                    <!-- <div class="col-1 align-self-center">
+                       <a href="#multi-item-example" role="button" data-bs-slide="prev">
+                            <i class="text-dark fas fa-chevron-left"></i>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </div>  -->
+                    <!--End Controls-->
+                    <!--Start Carousel Wrapper-->
+                    <div id="multi-item-example" class="col-10 carousel slide carousel-multi-item"
+                        data-bs-ride="carousel">
+                        <!--Start Slides-->
+                        <div class="carousel-inner product-links-wap" role="listbox">
+
+                            <!--First slide-->
+                            <div class="carousel-item active">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <a href="#">
+                                            <img class="card-img img-fluid thumb-image"
+                                                src="{{ thisProduct.image.url }}" onclick="changeImage(this)"
+                                                alt="Product Image 1">
+                                        </a>
+                                    </div>
+                                    <div class="col-4">
+                                        <a href="#">
+                                            <img class="card-img img-fluid thumb-image"
+                                                src="{{ thisProduct.image1.url }}" onclick="changeImage(this)"
+                                                alt="Product Image 2">
+                                        </a>
+                                    </div>
+                                    <div class="col-4">
+                                        <a href="#">
+                                            <img class="card-img img-fluid thumb-image"
+                                                src="{{ thisProduct.image2.url }}" onclick="changeImage(this)"
+                                                alt="Product Image 3">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/.First slide-->
+                        </div>
+
+                        <!--End Slides-->
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 mt-5 details">
+                <div class="card card-body">
+                    <div class="card-body">
+                        <h1 class="h2 fw-bold py-3">{{ thisProduct.product_name }}</h1>
+                        {% if thisProduct.stock != 0 %}
+                        {% if thisProduct.product_offer != 0 or thisProduct.category.category_offer != 0 %}
+                        <span class="h3 text-decoration-none text-dark pb-2">₹  {{ thisProduct.get_product_price }}</span><br> 
+                        {% if thisProduct.product_offer > thisProduct.category.category_offer %}    
+                        <span class="fs-6 text-decoration-none text-secondary"><del>₹  {{ thisProduct.price }}</del> ({{ thisProduct.product_offer }} % Off)</span>
+                        {% else %}
+                        <span class="fs-6 text-decoration-none text-secondary"><del>₹  {{ thisProduct.price }}</del> ({{ thisProduct.category.category_offer }} % Off)</span>
+                        {% endif %}
+                        {% else %}
+                        <p class="h3 py-2">₹ {{ thisProduct.price }}</p>
+                        {% endif %}
+                        {% else %}
+                        <span class="h3 text-decoration-none text-danger">Out of stock!!</span>
+                        {% endif %}
+                        <ul class="list-inline pt-4">
+                            <li class="list-inline-item">
+                                <h6>Brand:</h6>
+                            </li>
+                            <li class="list-inline-item">
+                                <p class="text-muted text-uppercase"><strong>{{ thisProduct.brand }}</strong></p>
+                            </li>
+                        </ul>
+                        <h6>Description:</h6>
+                        <p>{{ thisProduct.description|slice:100 }} ...</p>
+                        <form action="{% url 'addcart' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="product-title" value="Activewear">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <ul class="list-inline pb-3">
+                                        <li class="list-inline-item text-right">
+                                            Quantity
+                                            <input type="hidden" name="product-quantity" id="product-quanity" value="1">
+                                            <input type="hidden" name="product-id" id="product-id"
+                                                value="{{ thisProduct.id }}">
+                                        </li>
+                                        <li class="list-inline-item"><span class="btn btn-success"
+                                                id="btn-minus">-</span></li>
+                                        <li class="list-inline-item"><span class="badge bg-secondary"
+                                                id="var-value">1</span></li>
+                                        <li class="list-inline-item"><span class="btn btn-success"
+                                                id="btn-plus">+</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            {% if thisProduct.stock != 0 %}
+                            <div class="row pb-3">
+                                <div class="col d-grid">
+                                    <button type="submit" onclick="cartadd()" class="btn btn-success btn-lg"
+                                        name="submit" value="addtocard">Add To Cart</button>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="row pb-3">
+                                <div class="col d-grid">
+                                    <button type="submit" onclick="cartadd()" class="btn btn-success btn-lg"
+                                        name="submit" value="addtocard" disabled>Add To Cart</button>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Close Content -->
+
+
+<script src="/static/assets/js/slick.min.js"></script>
+<script src="https://unpkg.com/js-image-zoom@0.7.0/js-image-zoom.js" type="application/javascript"></script>
+<script>
+    var options1 = {
+        width: 400,
+        height: 400,
+        zoomWidth: 600,
+        offset: { vertical: 10, horizontal: 108 },
+
+    };
+    new ImageZoom(document.getElementById("main_image"), options1);
+
+    function changeImage(element) {
+        console.log('hello')
+        var main_prodcut_image = document.getElementById('product-detail');
+        main_prodcut_image.src = element.src;
+        var elements = document.getElementsByClassName("js-image-zoom__zoomed-image")
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].style.backgroundImage = `url(${element.src})`;
+        }
+    }
+
+    function cartadd() {
+        Swal.fire({
+            position: 'top-end',
+
+            icon: 'success',
+            title: 'Added to cart',
+            showConfirmButton: false,
+            timer: 1500,
+        })
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000);
+    }
+</script>
+{% endblock content %}

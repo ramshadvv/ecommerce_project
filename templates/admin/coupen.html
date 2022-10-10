@@ -1,0 +1,69 @@
+{% extends 'admin/adminbase.html' %}
+
+{% block content%}
+<body id="page-top">
+    <div class="container me-5 float-left">
+        <div class="text-center p-5">
+            <h1>COUPENS</h1>
+        </div>
+        <div class="text-end me-5 mb-2">
+          <a href="{% url 'addcoupen' %}"><button type="submit" class="btn btn-outline-success btn-lg px-3">Add Coupen</button></a>
+        </div>
+    <table id ="example" class="table">
+        <thead>
+          <tr>
+            <th scope="col">SL/No</th>
+            <th scope="col">Coupen Code</th>
+            <th scope="col-2">Offer</th>
+            <th scope="col-2">Expiry Date</th>
+            <th scope="col-2">Status</th>
+            <th style="width: 14rem !important;"></th>
+          </tr>
+        </thead>
+        <tbody>
+            {% if data %}
+            {% for i in data %}
+            
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <th scope="row">
+                    <span>{{ i.coupencode }}</span></a>
+                </th>
+                <td>{{ i.coupen_offer }} %</td>
+                <td>{{ i.expiry_date }}</td>
+                <td>{{ i.is_active }}</td>
+                <td>
+                    <a href="{% url 'editcoupen' i.id %}">
+                        <button type="submit" class="btn btn-outline-primary btn-lg px-4">Edit</button>
+                    </a>
+                    <button type="submit" class="btn btn-outline-danger btn-lg px-3 ms-3" data-bs-toggle="modal" data-bs-target="#deletecoupen-{{ i.id }}">Delete</button>
+                    <!-- Modal -->
+                    <div class="modal fade" id="deletecoupen-{{ i.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                            <p>Do you want to delete {{ i.coupencode }}</p>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <a href="{% url 'deletecoupen' i.id %}"><button type="button" class="btn btn-danger">Confirm</button></a>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        {% else %}
+        <td><h5>No Coupens</h5></td>
+        {% endif %}
+      </table>
+    </div>
+</body>
+
+{% endblock content%}

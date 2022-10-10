@@ -1,0 +1,68 @@
+{% extends 'admin/adminbase.html' %}
+
+{% block content%}
+{% load static %}
+
+<body id="page-top">
+    <div class="container float-left me-5">
+        <div class="text-center p-5">
+            <h1>CATEGORY OFFERS</h1>
+        </div>
+        <div class="text-end pb-3">
+          <a href="{% url 'addcategoryoffer' %}"><button type="submit" class="btn btn-outline-success btn-lg px-3">Add Category Offer</button></a>
+        </div>
+    <table id ="example" class="table">
+        <thead>
+          <tr>
+            <th scope="col">SL/No</th>
+            <th scope="col">Category Name</th>
+            <th scope="col">Offer</th>
+            <th style="width: 10rem;"></th>
+          </tr>
+        </thead>
+        <tbody>
+            {% if data %}
+            {% for i in data %}
+            {% if i.category_offer != 0 %}
+            
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <th scope="row">
+                  <span class="text-decoration-none">{{ i.category_name }}</span>
+                </th>
+                <td>{{ i.category_offer }} %</td>
+                <td>
+                  <a href="{% url 'editcategoryoffer' i.id %}" class="btn btn-outline-primary">Edit</a>
+                  <button type="submit" class="btn btn-outline-danger btn-lg px-3 ms-3" data-bs-toggle="modal" data-bs-target="#deletecategory-{{ i.id }}">Delete</button>
+                    <!-- Modal -->
+                    <div class="modal fade" id="deletecategory-{{ i.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                            <p>Do you want to delete offer of {{ i.category_name }}</p>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <a href="{% url 'deletecategoryoffer' i.id %}"><button type="button" class="btn btn-danger">Confirm</button></a>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+        {% else %}
+        <h5>No Categories</h5>
+        {% endif %}
+      </table>
+    </div>
+    
+</body>
+
+{% endblock content%}

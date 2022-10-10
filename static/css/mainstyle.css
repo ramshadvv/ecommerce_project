@@ -1,0 +1,226 @@
+body{
+    overflow-x: hidden;
+}
+#myresult {
+    width: 100%;
+    height: 450px;
+    z-index: 10;
+}
+.details{
+    z-index: 1;
+}
+
+.error {
+    color: rgb(245, 147, 147);
+}
+
+/* .card-image {
+    height: 600px;
+    width: 600px;
+} */
+
+.thumb-image {
+    height: 100px;
+    width: 100px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.img-zoom-container {
+    position: relative;
+}
+
+.img-zoom-lens {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    /*set the size of the lens:*/
+    width: 60px;
+    height: 60px;
+}
+
+.img-zoom-result {
+    border: 1px solid #d4d4d4;
+    /*set the size of the result div:*/
+    width: 300px;
+    height: 300px;
+}
+
+.result-image {
+    background-size: 2000px 1800px !important;
+    background-color: #fff;
+}
+.card-body{
+    background-color: #e9eef5;
+}
+.js-image-zoom__zoomed-image{
+    z-index: 100 !important;
+}
+.img-fluid{
+    width: 100% !important;
+    height: 75% !important;
+}
+#main_image{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 400px;
+}
+#main_image img{
+    width: 100% !important;
+    height: 100% !important;
+}
+.razorpay-payment-button{
+    background-color: #317ce9;
+    color: #fff;
+    padding: 10px 150px;
+    border-radius: 5px;
+    margin-top: 15px;
+    border: 0;
+}
+
+
+
+
+
+table {
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    table-layout: fixed;
+}
+
+table caption {
+    font-size: 1.5em;
+    margin: .5em 0 .75em;
+}
+
+table tr {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: .35em;
+}
+
+table th,
+table td {
+    padding: .625em;
+    text-align: center;
+}
+
+table th {
+    font-size: .85em;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+.table-totals tr{
+    background-color: inherit;
+}
+
+@media screen and (max-width: 1000px) {
+    #div-card{
+        width: 21rem;
+        height: 24rem;
+    }
+    .js-image-zoom__zoomed-image{
+        display: none;
+    }
+    .products-index-items{
+        padding: 1rem!important;
+    }
+    .products-order{
+        justify-content: end!important;
+    }
+    .wishlist{
+        top: 20px !important;
+        right: 20px !important;
+    }
+    .carttotal{
+        display:none;
+    }
+    table {
+        border: 0 !important;
+    }
+
+    table caption {
+        font-size: 1.3em !important;
+    }
+
+    table thead {
+        border: none !important;
+        clip: rect(0 0 0 0) !important;
+        height: 1px;
+        margin: -1px !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+        position: absolute !important;
+        width: 1px !important;
+    }
+
+    table tr {
+        border-bottom: 3px solid #ddd !important;
+        display: block !important;
+        margin-bottom: .625em !important;
+    }
+
+    table td {
+        border-bottom: 1px solid #ddd !important;
+        display: block !important;
+        font-size: .8em !important;
+        text-align: right !important;
+    }
+
+    table td::before {
+        /*
+    * aria-label has no advantage, it won't be read inside a table
+    content: attr(aria-label);
+    */
+        content: attr(data-label) !important;
+        float: left !important;
+        font-weight: bold !important;
+        text-transform: uppercase !important;
+    }
+
+    table td:last-child {
+        border-bottom: 0 !important;
+    }
+}
+
+.wishlist{
+    cursor: pointer;
+    position: absolute;
+    z-index: 100;
+    width: 36px;
+    height: 36px;
+    border-radius:
+    42%; border: 1px solid #f0f0f0;
+    box-shadow: 0 1px 4px 0 rgb(0 0 0 / 10%);
+    padding: 9px 12px 12px 9px;
+    background: #fff;
+    top: 52px; 
+    right: 52px;
+}
+.wishlist i{
+    color: #acb3bb; 
+    font-size: 24px; 
+    margin-left: 3px; 
+    margin-top: -3px;
+}
+a{
+    cursor: pointer;
+}
+#topScroll {
+right: 24px;
+bottom: 60px;
+width: 50px;
+height: 50px;
+line-height: 50px;
+box-shadow: 2px 2px 4px 4px rgb(36 37 38 / 8%);
+background-color: #ffffff;
+color: #333333;
+font-size: 18px;
+text-align: center;
+}

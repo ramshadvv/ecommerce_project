@@ -1,0 +1,124 @@
+{% extends 'admin/adminbase.html' %}
+
+{% block content%}
+
+<body id="top">
+<div class="container me-5 float-left">
+    <div class="text-center p-5">
+        <h1>ORDERS</h1>
+    </div>
+<table id="example1" class="table">
+    <thead>
+      <tr>
+        <th scope="col" name="first">SL/No</th>
+        <th scope="col">Username</th>
+        <th scope="col">Email</th>
+        <th scope="col">Products</th>
+        <th scope="col">Order Date</th>
+        <th scope="col">Status</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for i in data %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <th scope="row">{{ i.user }}</th>
+          <td>{{ i.user.email }}</td>
+          <td>
+            {% for item in i.items.all %}
+            {% if item.cancel_status == False %}
+            <li>{{ item.product.product_name }}</li>
+            {% elif i.status == "Canceled" %}
+            <li>{{ item.product.product_name }}</li>
+            {% endif %}
+            {% endfor %}
+          </td>
+          <td>{{ i.date_ordered }}</td>
+          <td>{{ i.payment_method }}</td>
+          <td>
+            <form action="" method="POST">
+              {% csrf_token %}
+              <!-- Button trigger modal -->
+              {% if i.status == "Delivered" %}
+              <button type="button" class="btn btn-outline-success" disabled>
+                {{ i.status }}
+              </button>
+              {% elif i.status == "Returned" %}
+              <button type="button" class="btn btn-outline-danger"  disabled>
+                {{ i.status }}
+              </button>
+              {% elif i.status == "Canceled" %}
+              <button type="button" class="btn btn-outline-danger"  disabled>
+                {{ i.status }}
+              </button>
+              {% else %}
+              <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#status-{{ i.id }}">
+                {{ i.status }}
+              </button>
+              {% endif %}
+
+              <!-- Modal -->
+              <div class="modal fade" id="status-{{ i.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Confirm</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Do you want to change status "{{ i.status }}"</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <a href="{% url 'editstatus' i.id %}"><button type="button" class="btn btn-outline-danger">Confirm</button></a>
+                    </div>
+                  </div>
+                </div>
+              </div> 
+            </form>
+          </td>
+          <td>
+            {% if i.status != "Canceled" and i.status != "Delivered" and i.status != "Out for delivery" and i.status != "Returned" %}
+            <form action=""method="POST">
+              {% csrf_token %}
+              <!-- Button trigger modal -->
+              <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancel-{{ i.id }}">
+                  Cancel
+              </button>
+
+              <!-- Modal -->
+              <div class="modal fade" id="cancel-{{ i.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Confirm</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Do you want to cancel the Order</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <a href="{% url 'cancelstatus' i.id %}"><button type="button" class="btn btn-danger">Confirm</button></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+</div>
+<script>
+  $(document).ready( function () {
+      $('#example1').DataTable()
+  } );
+</script> 
+
+</body>
+{% endblock content%}

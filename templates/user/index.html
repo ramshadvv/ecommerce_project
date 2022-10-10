@@ -1,0 +1,172 @@
+{% extends 'user/userbase.html' %}
+{% load static %}
+{% block content %}
+
+{% if selected == None and searched != True %}
+    {{searched}}
+    <div id="template-mo-zay-hero-carousel" class="carousel slide" data-bs-ride="carousel" style="height: 70vh;">
+        <ol class="carousel-indicators">
+            <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="0" class="active"></li>
+            <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="1"></li>
+            <li data-bs-target="#template-mo-zay-hero-carousel" data-bs-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="container">
+                    <div class="row p-5">
+                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                            <img class="img-fluid" src="https://images.news18.com/ibnlive/uploads/2021/08/best-laptops-under-rs-50k.png" alt="">
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="container">
+                    <div class="row p-5">
+                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                            <img class="img-fluid" src="https://images.news18.com/ibnlive/uploads/2022/08/redmi-note-11-se.jpg" alt="">
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="container">
+                    <div class="row p-5">
+                        <div class="mx-auto col-md-8 col-lg-6 order-lg-last">
+                            <img class="img-fluid" src="https://img.tttcdn.com/product/xy/2000/2000/p/gu1/P/9/PAE1139/PAE1139-1-d64d-flJ4.jpg" alt="">
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="carousel-control-prev text-decoration-none w-auto ps-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="prev">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        <a class="carousel-control-next text-decoration-none w-auto pe-3" href="#template-mo-zay-hero-carousel" role="button" data-bs-slide="next">
+            <i class="fas fa-chevron-right"></i>
+        </a>
+    </div>
+    <!-- End Banner Hero -->
+    {% endif %}
+
+
+    <!-- Start Categories of The Month -->
+
+    <section class="container py-5">
+        {% if selected %}
+        <div class="dropdown">
+            <a class="dropdown-toggle text-decoration-none text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Filter
+              </a>
+            <ul class="dropdown-menu"> 
+                <li><a class="dropdown-item" href="{% url 'sortwithprice' 'lowtohigh' selected %}">Price Low to High</a></li>
+                <li><a class="dropdown-item" href="{% url 'sortwithprice' 'hightolow' selected   %}">Price High to Low</a></li>
+            </ul>
+        </div>
+        {% else %}
+        <div class="dropdown">
+            <a class="dropdown-toggle text-decoration-none text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Filter
+              </a>
+            <ul class="dropdown-menu"> 
+                <li><a class="dropdown-item" href="{% url 'sortwithprice' 'lowtohigh' 'all' %}">Price Low to High</a></li>
+                <li><a class="dropdown-item" href="{% url 'sortwithprice' 'hightolow' 'all' %}">Price High to Low</a></li>
+            </ul>
+        </div>
+        {% endif %}
+        <div class="row text-center pt-3">
+            
+        
+            <div class="col-lg-6 m-auto">
+                {% if selected %}
+                <h1 class="h2">{{ selected }}</h1>
+                {% else %}
+                <h1 class="h2">SHOP NOW</h1>
+                {% endif %}
+                
+            </div>
+        </div>
+        {% if data %}
+        <div class="row d-flex justify-content-start">
+            {% for i in data %}
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6 col-6 p-5 mt-3 products-index-items" style="position: relative;">
+                {% if i.stock != 0 %}
+                {% if i.product_name not in wishlist %}
+                <a href="{% url 'wishlistadd' i.id %}" onclick="wishlistadd()">
+                    <div class="d-flex justify-content-center wishlist">
+                        <i class="fa fa-light fa-heart"></i>
+                    </div>
+                </a>
+                {% else %}
+                <a href="{% url 'wishlistdelete' i.id %}" onclick="wishlistdelete()">
+                    <div class="d-flex justify-content-center wishlist">
+                        <i class="fa fa-light fa-heart" style="color:red;"></i>
+                    </div>
+                </a>
+                {% endif %}
+                {% endif %}
+                
+                    <a href="{% url 'userproduct' i.id %}"><img src="{{ i.image.url }}" class="img-fluid border p-3"></a>
+                    <a href="{% url 'userproduct' i.id %}" class="text-decoration-none">
+                    <span class="h5 mt-3 mb-3 text-dark">{{ i.product_name }}</span><br>
+                    {% if i.stock != 0 %}
+                    {% if i.product_offer != 0 or i.category.category_offer != 0 %}
+                    <span class="h3 text-decoration-none text-dark">₹  {{ i.get_product_price }}</span><br> 
+                    {% if i.product_offer > i.category.category_offer %}    
+                    <span class="fs-6 text-decoration-none text-secondary"><del>₹  {{ i.price }}</del> ({{ i.product_offer }} % Off)</span>
+                    {% else %}
+                    <span class="fs-6 text-decoration-none text-secondary"><del>₹  {{ i.price }}</del> ({{ i.category.category_offer }} % Off)</span>
+                    {% endif %}
+                    {% else %}
+                    <span class="h3 text-decoration-none text-dark">₹  {{ i.price }}</span>
+                    {% endif %}
+                    {% else %}
+                    <span class="h3 text-decoration-none text-danger">Out of stock!!</span>
+                    {% endif %}
+                </a>
+            </div>
+            {% endfor %}    
+        </div>
+        {% else %}
+        <div>
+            <p>No products available!!</p>
+        </div>
+        {% endif %}
+    </section>
+    <!-- End Categories of The Month -->
+
+
+    {% if id != None %}
+    <script>
+        function wishlistadd() {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Added to Wishlist',
+                showConfirmButton: false,
+                timer: 1500,
+            })
+            setTimeout(() => {
+                window.location.reload()
+            }, 1000);
+        }
+        function wishlistdelete() {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Removed from Wishlist',
+                showConfirmButton: false,
+                timer: 1500,
+            })
+            setTimeout(() => {
+                window.location.reload()
+            }, 1000);
+        }
+    </script>
+    {% endif %}
+
+{% endblock content %}
+

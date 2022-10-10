@@ -1,0 +1,436 @@
+{% extends 'user/userbase.html' %}
+{% load static %}
+
+
+{% block content %}
+<head>
+    <style>
+        .adresstable{
+            border-collapse: unset !important;
+            table-layout: unset !important; 
+            border: 0;
+        }
+        .adresstable td{
+            padding: 0 !important;
+            text-align: unset !important;
+            border-style: none !important;
+
+
+        }
+    </style>
+</head>
+
+<div class="container py-5">
+    <h1 class="text-center">CHECKOUT</h1>
+    <div class="row">
+        <div class="col-lg-7 pt-5">
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Image</th>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    {% for thisProduct in order.items.all %}
+                    <tr>
+                        <td data-label="Image" scope="row"><img src="{{ thisProduct.product.image.url }}" alt=""
+                            style="width:70px;height:70px"></td>
+                        <td data-label="Product Name" class="pt-4"><span id="product" data-product="{{thisProduct.id}}"></span>{{ thisProduct.product.product_name }}</td>
+                        <td data-label="Quantity" class="pt-4">{{ thisProduct.quantity }}</td>
+                        <td data-label="Price" class="pt-4">{{ thisProduct.get_item_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            
+            
+            <h1 class="h2 fw-bold">ADDRESS</h1>
+            {% if address != None %}
+                        <div class="row">
+                            {% for add in add_qs %}
+                                <div class="col-md-3 mt-3 card ms-3 " style="width: 14rem;padding: 0;">
+                                    {% if forloop.counter == 1 %}
+                                    <div class="card-body"  onclick="selection('{{add.id}}')">
+                                        <input type="radio" name="address_id" class="address_class{{ add.id }}" id="address_id"
+                                        style="accent-color: red;" value="{{ add.id }}" checked>
+                                      <p class="card-text">{{ add.first_name }} {{ add.last_name }},
+                                        {{ add.house_name }}, {{ add.street_name }}, {{ add.city }}, {{ add.state }}, {{ add.post_code }}</p>
+                                     
+                                    </div>
+                                    {% else %}
+                                    <div class="card-body" onclick="selection('{{add.id}}')">
+                                        <input type="radio" name="address_id" class="address_class{{ add.id }}" id="address_id"
+                                        style="accent-color: red;" value="{{ add.id }}">
+                                      <p class="card-text">{{ add.first_name }} {{ add.last_name }},
+                                        {{ add.house_name }}, {{ add.street_name }}, {{ add.city }}, {{ add.state }}, {{ add.post_code }}</p>
+                                     
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div style="margin-top: 30px;">
+                            <a href="{% url 'addaddress' %}"><span class="btn btn-success btn-lg px-6 m-5">Add
+                                    address</span></a>
+
+                        </div>
+                        {% else %}
+                        <input type="hidden" name="address_id" id="address_id" value="-1">
+                        <a href="{% url 'addaddress' %}"><span class="btn btn-success btn-lg px-6 m-5">Add
+                                address</span></a>
+                        {% endif %} 
+                        <div class="my-5">
+                            {% if coupen_check == False %}
+                            <form action=""method='post'>
+                                {% csrf_token %}
+                                <input type="text" class="form-control my-2 " id="coupen" name="coupen" placeholder="Enter your coupen code.">
+                                <input type="hidden" id="current_total" name="current_total" value="{{ total_amount }}">
+                                <button type="submit" class="btn btn-primary">check</button>
+                            </form>
+                            {% else %}
+                            <h6 class="text-success pt-1 ps-2">You got  {{ offer }}%  discount!!!</h6>
+                            {% endif %}
+                            {% for message in messages %}
+                            {% if "coupenerror" in message.tags %}
+                            <p><span class="text-danger">{{message}}</span></p>
+                            {% endif %}
+                            {%endfor%} 
+                        </div>
+            
+
+        </div>
+        <div class="col-lg-5 mt-5">
+            <div class="card card-body payment-checkout">
+                <div class="card-body">
+                    <div>
+                            <h1 class="h2 fw-bold p-3">CART TOTALS</h1>
+                            <table class="table">
+                                <tbody class="table-totals">
+                                    <tr>
+                                        <td>Subtotal</td>
+                                        <td>₹ {{ total_amount }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tax</td>
+                                        <td>₹ {{ tax }}</td>
+                                    </tr>
+                                    {% if discount != 0 %}
+                                    <tr>
+                                        <td>Discount</td>
+                                        <td class="text-danger">- ₹ {{ discount }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    <tr>
+                                        <td>Total</td>
+                                        <td id="price" data-price="{{ grand_total }}">₹ {{ grand_total }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="text-center">
+                                            <a href="{% url 'cart' %}"><button class="btn btn-success btn-sm px-6 my-2">Go to
+                                                    Cart</button></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                    </div>
+                    <form action="{% url 'placed' %}" method="post" id="myForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="grand_total" value="{{ grand_total }}">
+                        <input type="hidden" name="address_id" id="selectedadrress" value="{{ addresses.id }}">
+                        {% if coupen_check == True and coupen_code != None %}
+                        <input type="hidden" name="coupen_code" value="{{ coupen_code }}">
+                        <input type="hidden" name="coupen_check" value="{{ coupen_check }}">
+                        {% else %}
+                        <input type="hidden" name="coupen_code" value="{{ coupen_code }}">
+                        <input type="hidden" name="coupen_check" value="{{ coupen_check }}">
+
+                        {% endif %}
+                        <input type="hidden" name="discount" value="{{ discount }}">
+                        
+                        <h4 class="fw-bold mt-4">PAYMENT OPTIONS</h4>
+
+                        <div class="u-s-m-b-10 pt-2">
+
+                            <!--====== Radio Box ======-->
+                            <div class="radio-box">
+                                <input type="radio" id="cash-on-delivery" onclick="showDiv()" value="cash on delivery"
+                                style="accent-color: red;" name="payment">
+                                <label class="radio-box__label" for="cash-on-delivery">Cash on Delivery</label>
+                            </div>
+                            <!--====== End - Radio Box ======-->
+
+                        </div>
+                        <div class="u-s-m-b-10 py-2">
+
+                            <!--====== Radio Box ======-->
+                            <div class="radio-box">
+
+                                <input type="radio" id="paypalid" style="accent-color: red;"  value="paypal" onclick="showDiv()" name="payment">
+
+                                <label class="radio-box__label" for="pay-pal">Pay with PayPal<span
+                                        class="material-icons-outlined">
+
+                                    </span></label>
+                            </div>
+                            <!--====== End - Radio Box ======-->
+
+                        </div>
+                        <div class="u-s-m-b-10 pb-2">
+
+                            <!--====== Radio Box ======-->
+                            <div class="radio-box">
+                                <input type="radio"style="accent-color: red;"  value="razorpay" onclick="showDiv()" id="razorpay" name="payment">
+                                <label class="radio-box__label" for="pay-pal"> Pay with RazorPay</label>
+                            </div>
+                            <!--====== End - Radio Box ======-->
+
+                        </div>
+
+                    
+                        <div class="row py-3" id="placeorder">
+                            <div class="col d-grid">
+                                <button type="submit" id="confirmBtn" class="btn btn-success btn-lg" name="submit"
+                                    value="addtocard">Place Order</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="paypaldiv" style="display:none;" class="answer_list pt-3">
+                        <div id="smart-button-container">
+                            <div style="text-align: center;">
+                                <div id="paypal-button-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="razorpaydiv" style="display:none;" class="answer_list">
+                        <form action="{% url 'razorpay_checkout' %}" method="get">
+                            {% csrf_token %}
+                            <input value="razorpay" type="hidden" name="payment" id="payment">
+                            {% for thisProduct in order.items.all %}
+                            <input value="{{thisProduct.id}}" type="hidden" name="product" id="product">
+                            {% endfor %}
+                            <input value="{{ addresses.id }}" type="hidden" name="address" id="address">
+                            <input value="{{ grand_total }}" type="hidden" name="grandtotal" id="grand_total">
+                            <input value="{{ cart_count }}" type="hidden" name="cart_number" id="cart_number">
+                            <input type="hidden" value="{{payment.amount}}" name="payment-id">
+                            {% if coupen_check == True and coupen_code != None %}
+                            <input type="hidden" name="coupen_code" value="{{ coupen_code }}">
+                            <input type="hidden" name="coupen_check" value="{{ coupen_check }}">
+                            {% else %}
+                            <input type="hidden" name="coupen_code" value="{{ coupen_code }}">
+                            <input type="hidden" name="coupen_check" value="{{ coupen_check }}">
+                            {% endif %}
+                            <input type="hidden" name="discount" value="{{ discount }}">
+                            <script src="https://checkout.razorpay.com/v1/checkout.js" 
+                            data-key="{{ key }}"
+                                data-amount="{{payment.amount}}" 
+                                data-currency="INR" 
+                                data-order_id="{{payment.id}}"
+                                data-buttontext="Pay with Razorpay" 
+                                data-name="Acme Corp"
+                                data-description="A Wild Sheep Chase is the third novel by Japanese author Haruki Murakami"
+                                data-image="https://example.com/your_logo.jpg" 
+                                data-prefill.name="Gaurav Kumar"
+                                data-prefill.email="gaurav.kumar@example.com" 
+                                data-theme.color="#F37254"></script>
+                            <input style="background-color: red;" id="razorpay" type="hidden" custom="Hidden Element"
+                                name="hidden">
+
+                        </form>
+
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    
+    function selection(addId){
+        document.querySelector('.address_class'+addId).checked=true;
+        document.getElementById('address').value=addId;
+        document.getElementById('selectedadrress').value=addId
+    }
+</script>
+
+<script
+    src="https://www.paypal.com/sdk/js?client-id=AcKRCNKs5WUOQEOb_qxJ6qqh_yiWGdlQ5OGO_Acqf6Qny5E6YY-EctVld0H_0_BINIlHW7jMEzXuFXEu&currency=USD"
+    data-sdk-integration-source="button-factory"></script>
+
+<script>
+    const btn = document.getElementById('confirmBtn');
+    btn.addEventListener('click', function placeOrder(e) {
+        if (document.getElementById('razorpay').checked == false && document.getElementById('paypalid').checked == false && document.getElementById('cash-on-delivery').checked == false) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: "You don't selected any payment methods! please select it!!",
+            })
+        }
+    })
+    function showDiv() {
+        let payment = document.forms["myForm"]["payment"].value;
+        try {
+            var address = document.forms["myForm"]["selectedadrress"].value;
+        } catch {
+            console.log('No address')
+        }
+
+        if (payment == 'paypal') {
+            if (document.getElementById('selectedadrress').value == "-1") {
+                document.getElementById('paypalid').checked = false
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: "You don't selected any address! please select an address!!",
+                })
+            }
+            else {
+                document.getElementById('paypaldiv').style.display = "block";
+                document.getElementById('placeorder').style.display = "none";
+                document.getElementById('razorpaydiv').style.display = "none";
+            }
+        }
+
+        else if (payment == "cash on delivery") {
+            if (document.getElementById('selectedadrress').value == "-1") {
+                document.getElementById('cash-on-delivery').checked = false
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: "You don't selected any payment methods! please select an address!!",
+                })
+            }
+            else {
+                document.getElementById('paypaldiv').style.display = "none";
+                document.getElementById('placeorder').style.display = "block";
+                document.getElementById('razorpaydiv').style.display = "none";
+            }
+
+
+        }
+        else if (payment == 'razorpay') {
+            if (document.getElementById('selectedadrress').value == "-1") {
+                document.getElementById('razorpay').checked = false
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: "You don't selected any payment methods! please select an address!!",
+                })
+            }
+            else {
+                document.getElementById('razorpaydiv').style.display = "block";
+                document.getElementById('placeorder').style.display = "none";
+                document.getElementById('paypaldiv').style.display = "none";
+            }
+        }
+
+
+    }
+
+    function initPayPalButton() {
+        paypal.Buttons({
+            style: {
+                shape: 'rect',
+                color: 'gold',
+                layout: 'vertical',
+                label: 'paypal',
+
+            },
+
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '0.01' //'{{ usd_amount }}'
+                        }
+                    }]
+                });
+            },
+
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    // Show a success message to the buyer
+                    //alert('Transaction completed by ' + details.payer.name.given_name + '!');
+
+                    send_data_to_backend()
+
+                });
+            },
+
+
+            onError: function (err) {
+                alert('not completed')
+
+            }
+        }).render('#paypal-button-container');
+    }
+    initPayPalButton();
+    async function send_data_to_backend() {
+        var form = document.getElementById("myForm")
+        let csrftoken = form.getElementsByTagName("input")[0].value
+        let address = document.forms["myForm"]["selectedadrress"].value;
+        let payment = document.forms["myForm"]["payment"].value;
+        let discount = document.forms["myForm"]["discount"].value;
+        console.log('inside paypal')
+        let coupen_check = document.forms["myForm"]["coupen_check"].value;
+        let coupen_code = document.forms["myForm"]["coupen_code"].value;
+        //let product = document.getElementById('product')
+        //var productId = product.getAttribute('data-product');
+        let total = document.getElementById('price')
+        let num = total.getAttribute('data-price');
+        let get_total = parseInt(num)
+
+        if (address == "") {
+            alert('Please select address')
+        }
+
+
+        var url = '/placing/'
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify({
+                'payment': payment, 'address': address, 'get_total': get_total, 'coupen_check':coupen_check, 'coupen_code':coupen_code, 'discount':discount
+            })
+
+        })
+            .then((response) => {
+                return response.json()
+            })
+            .then((data) => {
+                console.log('data:', data)
+
+                Swal.fire({
+                    title: 'Order placed successfully ',
+                    showConfirmButton: false,
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp'
+                    },
+                    timer: 1500000,
+                })
+                setTimeout(() => {
+                    window.location.href = "/placed/"
+                }, 1000);
+
+
+            })
+    }
+</script>
+
+{% endblock content %}

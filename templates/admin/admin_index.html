@@ -1,0 +1,248 @@
+{% extends 'admin/adminbase.html' %}
+{% load static %}
+
+{% block content%}
+<head>
+  
+    <script src="{% static 'admin/vendor/chart.js/Chart.min.js'%}"></script>
+    
+    <!-- Page level custom scripts -->
+    <script src="{% static 'admin/js/demo/chart-area-demo.js' %}"></script>
+    <script src="{% static 'admin/js/demo/chart-pie-demo.js' %}"></script>
+</head>
+
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+   
+       <!-- End of Sidebar -->
+
+       <!-- Content Wrapper -->
+       <!-- <div id="content-wrapper" class="hello me-5"> -->
+
+           <!-- Main Content -->
+           <!-- <div id="content justify-content-lg-center"> -->
+
+
+               <!-- Begin Page Content -->
+               <div class="container mt-5 me-5 float-left">
+
+                   <!-- Page Heading -->
+                   <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                       <h1 class="h3 mb-0 text-light-800">Dashboard</h1>
+
+                   </div>
+
+                   <!-- Content Row -->
+                   <div class="row">
+
+                    <!-- Earnings (Annual) card -->
+                       <div class="col-xl-3 col-md-6 mb-4">
+                           <div class="card border-left-success shadow h-100 py-2">
+                               <div class="card-body">
+                                   <div class="row no-gutters align-items-center">
+                                       <div class="col mr-2">
+                                           <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                               Total Customers</div>
+                                           <div class="h5 mb-0 font-weight-bold text-gray-800">{{customer_count}}</div>
+                                       </div>
+                                       <div class="col-auto">
+                                           <i class="fas fa-user fa-2x text-gray-300"></i>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                    <!-- Earnings (Annual) card -->
+
+                   
+
+                  <!-- Earnings (Monthly) Card Example -->
+                       <div class="col-xl-3 col-md-6 mb-4">
+                           <div class="card border-left-primary shadow h-100 py-2">
+                               <div class="card-body">
+                                   <div class="row no-gutters align-items-center">
+                                       <div class="col mr-2">
+                                           <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                           Total Products  </div>
+                                           <div class="h5 mb-0 font-weight-bold text-gray-800"> {{product_count}}</div>
+                                       </div>
+                                       <div class="col-auto">
+                                           <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   <!-- Earnings (Monthly) Card Example -->
+                   
+                   <!-- Total product Card Example -->
+                         <div class="col-xl-3 col-md-6 mb-4">
+                           <div class="card border-left-primary shadow h-100 py-2">
+                               <div class="card-body">
+                                   <div class="row no-gutters align-items-center">
+                                       <div class="col mr-2">
+                                           <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                              Total Orders</div>
+                                           <div class="h5 mb-0 font-weight-bold text-gray-800">{{order_count}}</div>
+                                       </div>
+                                       <div class="col-auto"> 
+                                           <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+               
+                         <div class="col-xl-3 col-md-6 mb-4">
+                           <div class="card border-left-primary shadow h-100 py-2">
+                               <div class="card-body">
+                                   <div class="row no-gutters align-items-center">
+                                       <div class="col mr-2">
+                                           <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                               Earnings (Monthly)</div>
+                                           <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{total_sum}}</div>
+                                       </div>
+                                       <div class="col-auto">
+                                           <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+
+                       <!-- Pending Requests Card Example -->
+
+                   </div>
+                   
+ <div class="row">
+
+    <!-- Area Chart -->
+    <div class="col-xl-8 col-lg-7">
+       
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="col-xl-6 col-lg-12">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div
+                class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
+               
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="chart-pie pt-4 pb-2">
+                    <canvas id="myPieChart"></canvas>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+    <div class="col-xl-6 col-lg-12">
+     <div class="card shadow mb-4">
+         <!-- Card Header - Dropdown -->
+         <div
+             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+             <h6 class="m-0 font-weight-bold text-primary">User Status</h6>
+            
+         </div>
+         <!-- Card Body -->
+         <div class="card-body">
+             <div class="chart-pie pt-4 pb-2">
+                 <canvas id="myPieChart_user"></canvas>
+             </div>
+         </div>
+     </div>
+</div>
+
+<div class="col-xl-8 col-lg-12">
+ <div class="card shadow mb-4">
+     <!-- Card Header - Dropdown -->
+     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+         <h6 class="m-0 font-weight-bold text-primary">Monthly Earnings</h6>
+        
+     </div>
+     <!-- Card Body -->
+     <div class="card-body" style="height: 420px; margin-bottom:10px;padding:10px 0px">
+         <div class="chart-pie pt-4 pb-2">
+             <canvas id="myAreaChart"></canvas>
+         </div>
+         
+     </div>
+ </div>
+ </div>
+ 
+
+
+ </div>
+ 
+</div>
+ </body>
+
+ <script>
+  var xValues = ["Cancel Orders", "Delivered Orders", "Total orders"];
+  var yValues = ['{{cancel_order}}', '{{delivered_order}}', '{{order_count}}'];
+  var barColors = ['#FF0000', '#008000', '#36b9cc'];
+  
+  new Chart("myPieChart", {
+    type: "pie",
+    data: {
+      labels:["Cancel Orders", "Delivered Orders", "Total orders"],
+      datasets: [{
+        backgroundColor: barColors,
+        data: yValues
+      }]
+    },
+    
+  });
+  </script>
+
+<script>
+  var xValues = ["Total Users", "Inactiveuser", "Active users"];
+  var yValues = ['{{cancel_order}}', '{{delivered_order}}', '{{order_count}}'];
+  var barColors = ['#FF0000', '#008000', '#36b9cc'];
+  
+  new Chart("myPieChart_user", {
+    type: "pie",
+    data: {
+      labels:["Cancel Orders", "Delivered Orders", "Total orders"],
+      datasets: [{
+        backgroundColor: barColors,
+        data: yValues
+      }]
+    },
+    
+  });
+  </script>
+
+
+<script>
+  var xValues = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var yValues = ["{{ month.jan }}", "{{ month.feb }}", "{{ month.mar }}", "{{ month.apr }}", "{{ month.may }}", "{{ month.jun }}", "{{ month.jul }}", "{{ month.aug }}", "{{ month.sep }}", "{{ month.oct }}", "{{ month.nov }}", "{{ month.dec }}"];
+  var barColors = ["blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue", "blue"];
+  
+  new Chart("myAreaChart", {
+    type: "bar",
+    data: {
+      labels: xValues,
+      datasets: [{
+        backgroundColor: barColors,
+        data: yValues
+      }]
+    },
+    options: {
+      legend: {display: false}
+    }
+  });
+  </script>
+
+                      
+                  
+</body>
+
+
+{% endblock %}

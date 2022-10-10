@@ -1,0 +1,37 @@
+{% extends 'admin/adminbase.html' %}
+{% block content %}
+<body>
+    <div class="col-md-10">
+    <div class="container pt-5 pb-5 me-5">
+        <h1 class="text-center pb-5 fw-bold">ADD CATEGORY</h1>
+        <div class="container" style="width: 50%;height:50%;">
+            <div class="row pt-5">
+                <form action="" method="post">
+                {% csrf_token %}
+                <div class="form-group col-md-12 mb-3">
+                    <label for="inputname" class="fw-bold">Category Name</label>
+                    <input type="text" class="form-control mt-3" id="category_name" name="category_name" placeholder="Enter your category_name" value="{{ data.category_name }}">
+                </div>
+                <div class="form-group col-md-12 mb-3">
+                    <label for="inputname" class="fw-bold">Description</label>
+                    <input type="text" class="form-control mt-4" id="description" name="description" placeholder="Enter your description" value="{{ data.description }}">
+                </div>
+                {% for message in messages %}
+                {% if "categoryerror" in message.tags %}
+                <p><span class="text-danger">{{message}}</span></p>
+                {%endif%} 
+                {%endfor%} 
+                <div class="col text-center mt-3">
+                    <button type="submit" class="btn btn-success btn-lg px-4">Submit</button>
+                </div>
+                </form>
+            </div>
+    
+        </div>
+    
+    </div>
+    </div>
+</body>
+
+
+{% endblock content %}

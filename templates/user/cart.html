@@ -1,0 +1,228 @@
+{% extends 'user/userbase.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<body>
+  <div class="container pt-5">
+    <h1 class="text-center">CART</h1>
+    <div class="p-5 mt-5">
+      {% if cart_count != 0 %}
+      <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Images</th>
+            <th scope="col">Product</th>
+            <th scope="col">Unit Price</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total</th>
+            <th scope="col">Remove</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for thisProduct in order_object.items.all %}
+          <tr>
+            <td data-label="Images" scope="row"><img src="{{ thisProduct.product.image.url }}" alt=""
+                style="width:70px;height:70px"></td>
+            <td data-label="Product" class="pt-4"><a href="{% url 'userproduct' thisProduct.product.id %}"
+                class="text-decoration-none text-dark">{{ thisProduct.product.product_name }}</a></td>
+            <td data-label="Unit Price" class="pt-4" id="price-value{{thisProduct.id}}">{{ thisProduct.product.get_product_price }}</td>
+            <td data-label="Quantity" class="pt-4">
+              <li class="list-inline-item  text-center">
+                {% if thisProduct.quantity == 1 %}
+                <button type="button" class="btn btn-success" id="btn-minus" disabled>-</button>
+                {% else %}
+                <button type="button" class="btn btn-success" id="btn-minus{{ thisProduct.id }}" onclick="changeQuantity('{{thisProduct.id}}', -1)">-</button>
+                {% endif %}
+              </li>
+              <li class="list-inline-item"><span class="badge bg-secondary" id="quantity-value{{thisProduct.id}}">{{ thisProduct.quantity }}</span></li>
+              <li class="list-inline-item">
+                <button type="button" class="btn btn-success" onclick="changeQuantity('{{thisProduct.id}}', 1)">+</button>
+
+              </li>
+            </td>
+            <td data-label="Total" class="pt-4" id="total-value-cart{{thisProduct.id}}">{{ thisProduct.get_item_price }}</td>
+            <td data-label="Remove" class="pt-4">
+              <div>
+                <button class="btn btn-danger btn-sm px-6" data-bs-toggle="modal"
+                  data-bs-target="#deleteitem-{{ thisProduct.id }}">Delete</button>
+                <!-- Modal -->
+                <div class="modal fade" id="deleteitem-{{ thisProduct.id }}" tabindex="-1"
+                  aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p>Do you want to delete {{ thisProduct.product.product_name }}</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a href="{% url 'deletecartitem' thisProduct.id %}"><button type="button"
+                            class="btn btn-danger">Confirm</button></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </form>
+
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <h4 class="text-center">CART IS EMPTY</h4>
+      <p class="text-center mt-3"><a href="{% url 'home' %}" class="btn btn-success">Go Shop</a></p>
+      {% endif %}
+      <input type="hidden" id="cartempty" value="{{ order_object.items.exists }}">
+    </div>
+    
+
+    <div class="p-5 d-flex justify-content-end" style="height: 450px;">
+      <div class="card" style="height: 273px; width: 330px;">
+        <h1 class="h2 fw-bold p-3">CART TOTALS</h1>
+        <table class="table">
+          <tbody>
+            <tr>
+              <th scope="col" class="carttotal">Subtotal</th>
+              <td data-label="Subtotal" id="">
+                <input type="hidden" id="total-amount-value" value="{{ total_amount }}">
+                <span id="total-amount-value-element">₹ {{ total_amount }}</span></td>
+            </tr>
+            <tr>
+              <th scope="col" class="carttotal">Tax</th>
+              <td data-label="Tax" id="tax-value">₹ {{ tax }}</td>
+            </tr>
+            <tr>
+              <th scope="col" class="carttotal">Total</th>
+              <td data-label="Total" id="">
+                <input type="hidden" id="grand-total" value="{{ tax_amount }}">
+                <span id="grand-total-element">₹ {{ tax_amount }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" class="text-center"><a href="{% url 'checkout' %}"><button type="button"
+                    class="btn btn-success btn-sm px-6 my-2" id="checkoutbtn">Proceed to CheckOut</button></a></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+      {% for message in messages %}
+      <p><span class="text-danger">{{message}}</span></p>
+      {%endfor%}
+    </div>
+    <form action="" id="myForm" method="post">
+      {% csrf_token %}
+    </form>
+  </div>
+</body>
+<script>
+    const emptycart = document.getElementById("cartempty").value
+    const btn = document.getElementById("checkoutbtn")
+    var quantity = document.getElementById('quantity-value').innerHTML
+    if(quantity == 1){
+      document.getElementById("btn-minus").disabled = true;
+    }
+    console.log(emptycart)
+    btn.addEventListener('click', function placeOrder(e){
+      if (emptycart == "False") {
+        e.preventDefault();
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: "Your cart is Empty, Please add any product!!",
+        })
+      }
+    })
+
+  function check(){
+    var quantity = document.getElementById('quantity-value').innerHTML
+    console.log(quantity)
+  }
+    
+  function changeQuantity(cartId,Count) {
+    var form = document.getElementById("myForm")
+    let csrftoken = form.getElementsByTagName("input")[0].value
+    var quantity = document.getElementById('quantity-value'+cartId).innerHTML
+    var price = document.getElementById('price-value'+cartId).innerHTML
+    var total_value = document.getElementById('total-amount-value').value
+    var total_value_cart = document.getElementById('total-value-cart'+cartId).innerHTML
+    var grandtotal_value = document.getElementById('grand-total').value
+    total_value = parseFloat(total_value)
+    
+    console.log(total_value)
+    total_value_cart = parseFloat(total_value_cart)
+    price = parseFloat(price)
+    grandtotal_value = parseFloat(grandtotal_value)
+    
+    quantity = parseInt(quantity)
+    count = parseInt(Count)
+    
+    
+    $.ajax({
+      type: "POST",
+      contentType: "application/json",
+      url: "/addcartquantity/",
+      data: JSON.stringify({cart: cartId, count:Count}),
+      dataType: "json",
+      headers: {
+        'X-CSRFToken': csrftoken,
+      },
+
+      success: (responce) => {
+        console.log('success')
+
+        // if (responce.removeProduct) {
+        //   alert("Product removed")
+        //   location.reload()
+        // } else {
+          // total_value += price
+          document.getElementById('quantity-value'+cartId).innerHTML = quantity + count
+          if (count == 1){
+            var newprice = total_value_cart + price
+            var newtotal = total_value + price
+            document.getElementById('total-value-cart'+cartId).innerHTML = newprice + ".0"
+            document.getElementById('total-amount-value-element').innerHTML = "₹ " + newtotal  + ".0"
+            var tax_amount = (newtotal*3)/100
+            document.getElementById('tax-value').innerHTML = "₹ " + (tax_amount)  + ".0"
+            document.getElementById('grand-total-element').innerHTML = "₹ " + (newtotal + tax_amount)  + ".0"
+
+          }else{
+            var newprice = total_value_cart - price
+            var newtotal = total_value - price
+            document.getElementById('total-value-cart'+cartId).innerHTML = newprice
+            document.getElementById('total-amount-value-element').innerHTML = "₹ " + newtotal
+            var tax_amount = (newtotal*3)/100
+            document.getElementById('tax-value').innerHTML = "₹ " + (tax_amount) 
+            document.getElementById('grand-total-element').innerHTML = "₹ " + (newtotal + tax_amount) 
+          }
+          
+          // document.getElementById('total-value').innerHTML = total_value
+          // var tax_amount = (total_value * 3)/100
+          // tax_amount = parseFloat(tax_amount)
+
+          
+          if(quantity == 2 && count == -1){
+            document.getElementById("btn-minus"+cartId).disabled = true;
+          }
+          else{
+            document.getElementById("btn-minus"+cartId).disabled = false;
+          }
+          
+        //   document.querySelector('.sub').innerHTML = responce.total
+        //   console.log(responce.total)
+        // }
+      }
+    })
+  }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+  integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock content %}

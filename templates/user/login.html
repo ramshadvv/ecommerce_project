@@ -1,0 +1,39 @@
+{% extends 'user/userbase.html' %}
+{% block content %}
+<div class="container pt-5 pb-5 ">
+    <h1 class="text-center pb-3 fw-bold">LOGIN</h1>
+    <div class="container" style="width: 50%;height:50%;">
+        <div class="row">
+            <form action="" method="post">
+            {% csrf_token %}
+            <div class="form-group col-md-12 mb-3">
+                <label for="inputname" class="fw-bold">User Name</label>
+                <input type="text" class="form-control mt-1" id="username" name="username" placeholder="Username">
+            </div>
+            <div class="form-group col-md-12 mb-3">
+                <label for="inputemail"class="fw-bold">Password</label>
+                <input type="password" class="form-control mt-1" id="pass" name="pass" placeholder="Password">
+            </div>
+            {% for message in messages %}
+            <p><span class="text-danger">{{message}}</span></p>
+            {%endfor%} 
+            <div class="col text-center mt-4">
+                <button type="submit" class="btn btn-success btn-lg px-3">Login</button>
+            </div>
+            <div class="col text-center mt-3">
+                <a href="{% url 'signup' %}" class="text-decoration-none"><span>Create an account</span></a>
+            </div>
+            <div class="col text-center mt-3">
+                <a href="{% url 'otplogin' %}" class="text-decoration-none"><span>Login with otp</span></a>
+            </div>
+            <div class="col text-center mt-3">
+                <a href="{% url 'passwordverification' %}" class="text-decoration-none"><span>Forgot password</span></a>
+            </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

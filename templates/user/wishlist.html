@@ -1,0 +1,70 @@
+{% extends 'user/userbase.html' %}
+{% load static %}
+
+
+{% block content %}
+<body>
+    <div class="container pt-5">
+      <h1 class="text-center">WISHLIST</h1>
+      <div class="p-5 mt-5">
+        {% if wishlist_count != 0 %}
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Images</th>
+              <th scope="col">Product</th>
+              <th scope="col">Unit Price</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for thisProduct in data %}
+            <tr>
+              <td data-label="Images" scope="row"><a href="{% url 'userproduct' thisProduct.product.id %}"
+                class="text-decoration-none text-dark"><img src="{{ thisProduct.product.image.url }}" alt=""
+                  style="width:70px;height:70px"></a></td>
+              <td data-label="Product" class="pt-4"><a href="{% url 'userproduct' thisProduct.product.id %}"
+                  class="text-decoration-none text-dark"><span class="h5">{{ thisProduct.product.product_name }}</span></a></td>
+              <td data-label="Unit Price" class="pt-4">{{ thisProduct.product.price }}</td>
+              <td class="pt-4">
+                <button class="btn btn-success btn-sm px-6 ms-3" data-bs-toggle="modal"
+                    style="padding: 8px 25px;">Add to cart</button>
+                  <button class="btn btn-danger btn-sm px-6 ms-3" data-bs-toggle="modal"
+                    data-bs-target="#deleteitemwishlist-{{ thisProduct.id }}" style="padding: 8px 25px;">Remove</button>
+                  <!-- Modal -->
+                  <div class="modal fade" id="deleteitemwishlist-{{ thisProduct.id }}" tabindex="-1"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Do you want to remove {{ thisProduct.product.product_name }} from Wishlist</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <a href="{% url 'deletewishlistitem' thisProduct.id %}"><button type="button"
+                              class="btn btn-danger">Confirm</button></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                
+                </form>
+  
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <h4 class="text-center">YOUR WISHLIST IS EMPTY</h4>
+        <p class="text-center mt-3"><a href="{% url 'home' %}" class="btn btn-success">Go Shop</a></p>
+        {% endif %}
+        <input type="hidden" id="cartempty" value="{{ order_object.items.exists }}">
+      </div>
+    </div>
+</body>
+{% endblock content %}

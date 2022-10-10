@@ -1,0 +1,174 @@
+{% extends 'user/userbase.html' %}
+{% load static %}
+{% block content %}
+
+<div  class="container mt-5 mb-5">
+    <div  class="row d-flex justify-content-center">
+        <div  class="col-md-8">
+            <div class="card"> 
+                <button onclick="window.print()" class="btn btn-primary btn-sm text-light"> Print</button>
+
+                
+               
+                <div     class="invoice p-5">
+
+                    <div class="payment border-top mt-3 mb-3 border-bottom table-responsive">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="py-2"> <span class="d-block text-muted">Order Date</span>
+                                            <span>{{data.date_ordered}}</span>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="py-2"> <span class="d-block text-muted">Name</span>
+                                            <span>{{data.Customer.first_name}} {{data.Customer.last_name}} </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="py-2"> <span class="d-block text-muted">Phone number</span>
+                                            <span>{{data.Customer.phone_number}}</span>
+                                        </div>
+                                    </td>
+
+
+                                    <td>
+                                        <div class="py-2"> <span class="d-block text-muted">Shiping Address</span>
+                                            <span>{{data.Customer.house_name}} {{data.Customer.street_name}} po {{data.Customer.post_code}}</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="product border-bottom table-responsive">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                </tr>
+                                {% for item in data.items.all %}
+                                <tr>
+                                    <td> <img src="{{item.product.image.url }}" width="90"> </td>
+                                    <td> <span class="font-weight-bold">{{item.product.product_name}}</span>
+                                        
+                                    </td>
+                                    <td><div class="product-qty"> <span class="d-block text-dark">{{ item.quantity }}</span>
+                                    </div></td>
+                                    <td>
+                                        <div class="text-right"> <span class="font-weight-bold" id=""> {{item.get_item_price}}</span> </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row d-flex justify-content-end">
+                        <div class="col-md-5">
+                            <table class="table table-borderless">
+                                <tbody class="totals">
+                                    {% comment %} <tr>
+                                        <td>
+                                            <div class="text-left"> <span class="text-muted">Total</span> </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-right"> <span></span> </div>
+                                        </td>
+                                    </tr>
+
+
+                                    <tr>
+                                        <td>
+                                            <div class="text-left"> <span class="text-muted">Discount</span> </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-right"> <span class="text-success"></span>
+                                            </div>
+                                        </td>
+                                    </tr> {% endcomment %} 
+                                    <tr class="border-top border-bottom">
+                                        <td>
+                                            <div class="text-left"> <span class="font-weight-bold">Tax</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-right"> <span class="font-weight-bold"> INR :{{data.get_tax}}</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-top border-bottom">
+                                        <td>
+                                            <div class="text-left"> <span class="font-weight-bold">Discount</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-right"> <span class="font-weight-bold text-danger"> - {{data.discount}}</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-top border-bottom">
+                                        <td>
+                                            <div class="text-left"> <span class="font-weight-bold">Total</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="text-right"> <span class="font-weight-bold"> INR :{{data.total_price}}</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+    body {
+        background-color: #ffffff;
+        font-family: 'Montserrat', sans-serif
+    }
+
+    .card {
+        border: none
+    }
+
+    .logo {
+        background-color: #eeeeeea8
+    }
+
+    .totals tr td {
+        font-size: 13px
+    }
+
+    .footer {
+        background-color: #eeeeeea8
+    }
+
+    .footer span {
+        font-size: 12px
+    }
+
+    .product-qty span {
+        font-size: 12px;
+        color: #dedbdb
+    }
+</style>
+</body>
+<script>
+    var value = document.getElementById("")
+</script>
+{% endblock %}

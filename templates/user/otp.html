@@ -1,0 +1,28 @@
+{% extends 'user/userbase.html' %}
+{% block content %}
+<div class="container pt-5 pb-5 ">
+    <h1 class="text-center pb-3 fw-bold">OTP VERIFICATION</h1>
+    <div class="container" style="width: 50%;height:50%;">
+        <div class="row">
+            <form action="{% url 'otpverification' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group col-md-12 mb-3">
+                <label for="inputname" class="fw-bold">Enter Otp</label>
+                <input type="text" class="form-control mt-3" id="number" name="number" placeholder="Enter your otp">
+            </div>
+            {% for message in messages %}
+            {%if "errorotp" in message.tags %}
+            <p><span class="text-danger">{{message}}</span></p>
+            {%endif%} 
+            {%endfor%} 
+            <div class="col text-center mt-3">
+                <button type="submit" class="btn btn-success btn-lg px-4">Submit</button>
+            </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

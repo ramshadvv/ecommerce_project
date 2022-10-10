@@ -1,0 +1,140 @@
+{% extends 'admin/adminbase.html' %}
+
+{% block content%}
+{% load static %}
+
+<body id="page-top">
+    <div class="container me-5 float-left">
+        <div class="text-center p-5">
+            <h1>SALES REPORT</h1>
+        </div>
+        <button class="btn btn-primary btn-lg ml-3 mb-3" id="download-pdf">Download as Pdf</button>
+        <a href=" {% url 'export_as_excel' %}" class="btn btn-primary btn-lg ml-3 mb-3"> Download as Excel</a></span>
+        <div class="my-3">
+          <h4 class="text-light py-2">SORT WITH DATE</h4>
+          <form action="{% url 'sort_with_date' %}">
+            <label for="date" class="text-light">From</label>
+            <input type="date" name="date" id="date">
+            <label for="date" class="text-light">To</label>
+            <input type="date" name="todate" id="todate">
+            <button class="btn btn-primary btn-lg">Find</button>
+            <label for="month" class="text-light ms-5">Month</label>
+            <input type="month" name="month" id="month">
+            <button class="btn btn-primary btn-lg">Find</button>
+            <label for="month" class="text-light ms-5">Year</label>
+            <select name="year" id="ddlYears" value = "...."> 
+              <option selected>Select</option>
+            </select>
+            <button class="btn btn-primary btn-lg">Find</button>
+          </form>
+        </div>
+        <div>
+            <table id ="example"  class="table table-bordered table-dark" style="width:100%">
+                <thead>
+                  <tr>
+                    <th  scope="col" class="border border-dark " style="color:white;">No:</th>
+                    <th  scope="col" class="border border-dark " style="color:white;">Customer</th>
+                    <th scope="col" class="border border-dark" style="color:white;">Product Name</th>
+                    <th scope="col" class="border border-dark" style="color:white;">Category  Name</th>
+                    <th scope="col" class="border border-dark" style="color:white;">Quantity</th>
+                    <th scope="col" class="border border-dark" style="color:white;">Total prize(INR)</th>
+                    <th scope="col" class="border border-dark" style="color:white;">Payment method</th>
+                    <th scope="col" class="border border-dark" style="color:white;">Order date</th>
+                    <th scope="col" class="border border-dark" style="color:white;">Transaction ID</th>
+                    <th scope="col" class="border border-dark" style="color:white;">Order status</th>
+                  </tr>
+                </thead>
+                <tbody class="border border-danger" >
+                {% for i in items  %}
+                  <tr>
+                    <th scope="row" class="border border-dark" style="color:white;">
+                          {{ forloop.counter }}
+                 
+                    </th>
+                    <th scope="row" class="border border-dark" style="color:white;">{{i.user}}</th>
+                    <td class="border border-dark" style="color:white;">
+                        {% for j in i.items.all %}
+                        <li class="text-center">{{j.product.product_name}}</li> 
+                        {% endfor %}
+                    </td>
+                    <td class="border border-dark" style="color:white;">
+                        {% for j in i.items.all %}
+                        <li class="text-center">{{j.product.category}}</li> 
+                        {% endfor %}
+                    </td>
+                    <td class="border border-dark" style="color:white;">
+                        {% for j in i.items.all %}
+                        <li class="text-center">{{j.quantity}}</li> 
+                        {% endfor %}
+                    </td>
+                    <td class="border border-dark" style="color:white;">{{i.total_price}}</td>
+                    <td class="border border-dark" style="color:white;">{{i.payment_method}}</td>
+                    <td class="border border-dark" style="color:white;">{{i.date_ordered}}</td>
+                    <td class="border border-dark" style="color:white;">{{i.transcation_id  }}</td>
+                 
+                    <td class="border border-dark" style="color:white;"> {{i.status}}</td >
+                     
+                  
+                  </tr>
+                  
+                  {% endfor %}
+                </tbody>
+                
+              </table>
+
+        </div>
+        
+          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  ...
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+</div>
+<script type="text/javascript">
+    document.getElementById('download-pdf').onclick = function(){
+        var element  = document.getElementById('example')
+        var opt = {
+            margin : 0.1 ,
+            filename: 'myfile.pdf',
+            image    : {type: 'jpeg',quality :0.98},
+            html2canvas :{scale :2},
+            jsPDF : {unit: 'in',format: 'letter',orientation:'landscape'}
+        };
+        html2pdf(element,opt);
+    };
+
+</script>
+<script type="text/javascript">
+  window.onload = function () {
+      //Reference the DropDownList.
+      var ddlYears = document.getElementById("ddlYears");
+
+      //Determine the Current Year.
+      var currentYear = (new Date()).getFullYear();
+
+      //Loop and add the Year values to DropDownList.
+      for (var i = 2022; i >= 2015; i--) {
+          var option = document.createElement("OPTION");
+          option.innerHTML = i;
+          option.value = i;
+          ddlYears.appendChild(option);
+      }
+  };
+</script>
+
+</body>
+
+{% endblock content%}

@@ -1,0 +1,38 @@
+{% extends 'admin/adminbase.html' %}
+
+{% block content%}
+<body id="page-top">
+    <div class="col-md-10">
+<div class="container pt-5 pb-5 ">
+    <h1 class="text-center pb-3 fw-bold">EDIT</h1>
+    <div class="container" style="width: 50%;height:50%;">
+        <div class="row">
+            <form action="" method="post">
+            {% csrf_token %}
+            <label for="inputname" class="fw-bold">Product Name</label>
+                    <input type="text" class="form-control mt-1" id="product_name" name="product_name"value="{{ data.product_name }}" readonly>
+                
+                    <div class="form-group my-3">
+                        <label for="inputname" class="fw-bold">Product Offer</label>
+                        <input type="number" class="form-control mt-1" id="product_offer" name="product_offer"
+                            placeholder="product offer" value="{{ data.product_offer }}">
+                    </div>
+                {% for message in messages %}
+                {% if "productediterror" in message.tags %}
+                <p><span class="text-danger">{{message}}</span></p>
+                {% endif %}
+                {%endfor%}
+                <div class="col-md-12 text-center mt-3">
+                    <button type="submit" class="btn btn-success btn-lg px-6">Submit</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+</div>
+</body>
+
+{% endblock content%}
+

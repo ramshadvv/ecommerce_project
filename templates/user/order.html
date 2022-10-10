@@ -1,0 +1,152 @@
+{% extends 'user/userbase.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center py-5">My Orders</h1>
+    <div class="p-5">
+        <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">#Sl</th>
+                <th scope="col" colspan="2">Product</th>
+                <th scope="col">Unit Price</th>
+                <th scope="col">Total</th>
+                <th scope="col">Status</th>
+                <th scope="col" colspan="2">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for value in order %}
+                
+              <tr>
+                <td class="pt-4" data-label="#Sl">
+                    {{ forloop.counter }}
+                </td>
+                <td class="pt-4"  colspan="2" data-label="Product">
+                    {% for thisProduct in value.items.all %}
+                    {% if thisProduct.cancel_status == False %}
+                    <li class="list-unstyled pb-2 d-flex justify-content-start products-order"><a class="text-decoration-none text-dark fw-bold" href="{% url 'userproduct' thisProduct.product.id %}">{{ thisProduct.product.product_name }}</a>
+                      
+                      {% if value.status != "Delivered" and value.status != "Canceled" and value.status != "Returned" and value.status != "Out for delivery" %}
+                      <a href="" class="text-decoration-none ms-5" data-bs-toggle="modal" data-bs-target="#cancelproduct-{{ thisProduct.id }}"><i class="bi bi-trash3 text-danger"></i></a>
+                      {% endif %}
+                      <!-- Modal --> 
+                      <div class="modal fade" id="cancelproduct-{{ thisProduct.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">Confirm</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="{% url 'deleteorderitem' thisProduct.id value.id %}" method="get">
+                              <div class="modal-body">
+                                <label for="inputname" class="fw-bold">Reason for the cancellation</label>
+                                <input type="textarea" class="form-control mt-1" id="reason" name="reason" placeholder="reason">
+                              </div>
+                              <div class="modal-footer">
+                                <span class="btn btn-secondary" data-bs-dismiss="modal">Close</button></span>
+                                <button type="submit" class="btn btn-danger">Confirm</button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div></li>
+                    {% elif value.status == "Canceled" %}
+                    <li class="list-unstyled pb-2 d-flex justify-content-start products-order"><a class="text-decoration-none text-dark fw-bold" href="{% url 'userproduct' thisProduct.product.id %}">{{ thisProduct.product.product_name }}</a>
+                     
+                    {% endif %}
+                    {% endfor %}
+                </td>
+                <td class="pt-4" data-label="Unit Price">
+                    {% for thisProduct in value.items.all %}
+                    {% if thisProduct.cancel_status == False %}
+                    <li class="list-unstyled pb-2">{{ thisProduct.product.price }}</li>
+                    {% elif value.status == "Canceled" %}
+                    <li class="list-unstyled pb-2">0</li>
+                    {% endif %}
+                    {% endfor %}
+                </td>
+                {% if value.status == "Canceled" %}
+                <td class="pt-4" data-label="Total"><span>0</span></td>
+                {% else %}
+                <td class="pt-4" data-label="Total">{{ value.total_price }}</td>
+                {% endif %}
+                {% if value.status == "Canceled" or value.status == "Returned" %}
+                <td class="pt-4" data-label="OrderStatus"><span class="text-danger fw-bold">{{ value.status }}</span></td>
+                {% elif value.status == "Delivered" %}
+                <td class="pt-4" data-label="OrderStatus"><span class="text-success fw-bold">{{ value.status }}</span></td>
+                {% else %}
+                <td class="pt-4" data-label="OrderStatus">{{ value.status }}</td>
+                {% endif %}
+                
+                {% if value.status != "Delivered" and value.status != "Canceled" and value.status != "Returned" %}
+                <td class="pt-4" colspan="2" data-label="Date">Delivered Soon!!</td>
+                {% else %}
+                <td class="pt-4" colspan="2" data-label="Date">{{ value.date_delivered }}</td>
+                {% endif %}
+                {% if value.status != "Canceled" and value.status != "Delivered" and value.status != "Out for delivery" and value.status != "Returned" %}
+                <td class="pt-4">
+                  <a href="" class="text-decoration-none ms-5" data-bs-toggle="modal" data-bs-target="#cancel-{{ value.id }}">Cancel</a>
+                  <!-- Modal -->
+                  <div class="modal fade" id="cancel-{{ value.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Confirm</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Do you want to cancel the Order</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <a href="{% url 'usercancelstatus' value.id %}"><button type="button" class="btn btn-danger">Confirm</button></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                {% endif %}
+                {% if value.status == "Delivered" and value.returnexpiry == True %}
+                <td>
+                  <a href="" class="text-decoration-none ms-5" data-bs-toggle="modal" data-bs-target="#return-{{ value.id }}">Return</a>
+                  <!-- Modal -->
+                  <div class="modal fade" id="return-{{ value.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Confirm</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{% url 'userreturnstatus' value.id %}" method="get">
+                          <div class="modal-body">
+                            <label for="inputname" class="fw-bold">Reason for the return</label>
+                            <input type="textarea" class="form-control mt-1" id="reason" name="reason" placeholder="reason">
+                          </div>
+                          <div class="modal-footer">
+                            <span class="btn btn-secondary" data-bs-dismiss="modal">Close</button></span>
+                            <button type="submit" class="btn btn-danger">Confirm</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                {% endif %}
+                {% if value.status == "Delivered" %}
+                <td>
+                  <a href="{% url 'invoice' value.id %}" class="text-decoration-none ms-5">Invoice</a>
+                </td>
+                {% endif %}
+
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        
+    </div>
+</div>
+
+{% endblock content %}

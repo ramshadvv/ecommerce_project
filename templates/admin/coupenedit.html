@@ -1,0 +1,39 @@
+{% extends 'admin/adminbase.html' %}
+
+{% block content%}
+<body id="page-top">
+    <div class="col-md-10">
+<div class="container pt-5 pb-5 ">
+    <h1 class="text-center pb-3 fw-bold">ADD COUPEN</h1>
+    <div class="container" style="width: 50%;height:50%;">
+        <div class="row">
+            <form action="" method="post">
+            {% csrf_token %}
+            <div class="form-group col-md-12 mb-3">
+                <label for="inputname" class="fw-bold">Coupen Code</label>
+                <input type="text" class="form-control mt-1" id="coupen-code" name="coupen-code" value="{{ data.coupencode }}">
+            </div>
+            <div class="form-group col-md-12 mb-3">
+                <label for="inputemail"class="fw-bold">Offer</label>
+                <input type="number" class="form-control mt-1" id="coupen-price" name="coupen-price" value="{{ data.coupen_offer }}">
+            </div>
+            <div class="form-group col-md-12 mb-3">
+                <label for="inputemail"class="fw-bold">Expiry Date</label>
+                <input type="date" class="form-control mt-1" id="expiry_date" name="expiry_date" value="{{ data.expiry_date }}">
+            </div>
+            {% for message in messages %}
+            <p><span class="text-danger">{{message}}</span></p>
+            {%endfor%} 
+            <div class="col text-center mt-3">
+                <button type="submit" class="btn btn-success btn-lg px-3">ADD</button>
+            </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+</div>
+</body>
+
+{% endblock content%}

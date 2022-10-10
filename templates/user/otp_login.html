@@ -1,0 +1,30 @@
+{% extends 'user/userbase.html' %}
+{% block content %}
+<div class="container pt-5 pb-5 ">
+    {% if passwordverify == True %}
+    <h1 class="text-center pb-3 fw-bold">Verification</h1>
+    {% else %}
+    <h1 class="text-center pb-3 fw-bold">OTP LOGIN</h1>
+    {% endif %}
+    <div class="container" style="width: 50%;height:50%;">
+        <div class="row">
+            <form action="" method="post">
+            {% csrf_token %}
+            <div class="form-group col-md-12 mb-3">
+                <label for="inputname" class="fw-bold">Phone Number</label>
+                <input type="text" class="form-control mt-3" id="number" name="number" placeholder="Enter your number">
+            </div>
+            {% for message in messages %}
+            <p><span class="text-danger">{{message}}</span></p>
+            {%endfor%} 
+            <div class="col text-center mt-3">
+                <button type="submit" class="btn btn-success btn-lg px-4">Submit</button>
+            </div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}

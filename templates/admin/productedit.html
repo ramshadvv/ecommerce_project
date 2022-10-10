@@ -1,0 +1,392 @@
+{% extends 'admin/adminbase.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<body id="page-top">
+    <div class="col-md-10">
+    <div class="container pt-5 pb-5 me-5" style="margin-left: 0 !important;">
+        <h1 class="text-center pb-3 fw-bold" style="margin-left: 30rem !important;">EDIT</h1>
+        <div class="container p-5" >
+            <form action="" class="submit-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+            <div class="row ">
+                
+                <div class="form-group col-md-6 my-3">
+                    <label for="inputname" class="fw-bold">Product Name</label>
+                    <input type="text" class="form-control mt-1" id="product_name" name="product_name" placeholder="product_name" value="{{ data.product_name }}">
+                </div>
+                <div class="form-group col-md-6 my-3">
+                    <label for="inputdescription" class="fw-bold">description</label>
+                    <input type="text" class="form-control mt-1" id="description" name="description" placeholder="description" value="{{ data.description }}">
+                </div>
+                <div class="form-group col-md-6 my-3">
+                    <label for="inputprice" class="fw-bold">Price</label>
+                    <input type="text" class="form-control mt-1" id="price" name="price" placeholder="price" value="{{ data.price }}">
+                    
+                     
+                </div>
+                <div class="form-group col-md-6 my-3">
+                    <label for="inputstock" class="fw-bold">stock</label>
+                    <input type="text" class="form-control mt-1" id="stock" name="stock" placeholder="stock" value="{{ data.stock }}">
+                </div>
+                <div class="form-group col-md-6 my-3">
+                    <label for="inputname" class="fw-bold">Select Category</label>
+                    <select class="form-select" aria-label="Default select example" name="category">
+                        <option selected>{{ data.category }}</option>
+                        {% for i in value %}
+                        {% if i != data.category %}
+                        <option value="{{ i.category_name }}">{{ i.category_name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                    <div class="form-group my-3">
+                        <label for="inputname" class="fw-bold">Brand</label>
+                        <input type="text" class="form-control mt-1" id="brand" name="brand" placeholder="brand" value="{{ data.brand }}">
+                    </div>
+                    {% for message in messages %}
+                    {% if "productediterror" in message.tags %}
+                    <p><span class="text-danger">{{message}}</span></p>
+                    {%endif%} 
+                    {%endfor%} 
+                    <div class="form-group my-3">
+                        <label for="input_product_status" class="fw-bold">product_status</label>
+                        <select class="form-select" aria-label="Default select example" name="product_status">
+                            <option selected value="{{ data.product_status }}">{{ data.product_status }}</option>
+                            {% if data.product_status == True %}
+                            <option value="False">False</option>
+                            {% else %}
+                            <option value="True">True</option>
+                            {% endif %}
+                        </select>
+                    </div> 
+                </div>
+                
+                <div class="form-group col-md-6 my-3">
+                    <label for="input_product_status" class="fw-bold mb-2">Upload Images</label><br>
+                    <span class="imageupload py-4">Image1 : </span><input type="file" class="form-control my-2" name="uploadFromPC" id="id_product_image">
+                    <span class="imageupload">Image2 : </span><input type="file" class="form-control my-1" name="uploadFromPC1"
+                        id="id_product_image1">
+                    <span class="imageupload">Image3 : </span> <input type="file" class="form-control my-1" name="uploadFromPC2"
+                        id="id_product_image2">
+                </div>
+                {% if "productediterror" not in messages.tags %}
+                {% for message in messages %}
+                <p><span class="text-danger">{{message}}</span></p>
+                {%endfor%}
+                {% endif %}
+                <div class="col-md-12 text-center mt-3">
+                    <button type="submit"  id="confirm-btn" class="btn btn-success btn-lg px-6">Submit</button>
+                </div>
+                
+            </div>
+        </form>
+        <div class="mt-5">
+            <img id="image1" src="" alt="">
+            <img id="image2" src="" alt="">
+            <img id="image3" src="" alt="">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <div id="image-box" class="img-fluid"></div>
+                    <button class="btn btn-outline-info" id="crop-btn" style=" margin-top: 10px; display: none;"
+                        type="button">Crop</button>
+                </div>
+            </div>
+        </div>
+    
+        </div>
+    </div>
+    </div>
+    
+    
+
+</body>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.js"></script>
+
+<script>
+    const imagebox = document.getElementById('image-box')
+    // crop-btn is the id of button that will trigger the event of change original file with cropped file.
+    const crop_btn = document.getElementById('crop-btn')
+    // id_image is the id of the input tag where we will upload the image
+    const input = document.getElementById('id_product_image')
+    var allowedExtensions =
+        /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+
+    var filePath = input.value;
+
+    // When user uploads the image this event will get triggered
+    input.addEventListener('change', () => {
+        if (!allowedExtensions.exec(input.value)) {
+            Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: "Please add valid product!!",
+            })
+            input.value = '';
+        }
+        else {
+            // Getting image file object from the input variable
+            const img_data = input.files[0]
+            // createObjectURL() static method creates a DOMString containing a URL representing the object given in the parameter.
+            // The new object URL represents the specified File object or Blob object.
+            const url = URL.createObjectURL(img_data)
+
+            // Creating a image tag inside imagebox which will hold the cropping view image(uploaded file) to it using the url created before.
+            imagebox.innerHTML = `<img src="${url}" id="image" style="width:100%;">`
+
+            // Storing that cropping view image in a variable
+            const image = document.getElementById('image')
+
+            // Displaying the image box
+            document.getElementById('image-box').style.display = 'block'
+            // Displaying the Crop buttton
+            document.getElementById('crop-btn').style.display = 'block'
+            // Hiding the Post button
+            document.getElementById('confirm-btn').style.display = 'none'
+
+            // Creating a croper object with the cropping view image
+            // The new Cropper() method will do all the magic and diplay the cropping view and adding cropping functionality on the website
+            // For more settings, check out their official documentation at https://github.com/fengyuanchen/cropperjs
+
+            const cropper = new Cropper(image, {
+                autoCropArea: 1,
+                viewMode: 1,
+                scalable: false,
+                zoomable: false,
+                movable: false,
+                aspectRatio: 1 / 1,
+                //  preview: '.preview',
+                minCropBoxWidth: 200,
+                minCropBoxHeight: 200,
+            })
+
+            // When crop button is clicked this event will get triggered
+            crop_btn.addEventListener('click', () => {
+                // This method coverts the selected cropped image on the cropper canvas into a blob object
+                cropper.getCroppedCanvas().toBlob((blob) => {
+
+                    // Gets the original image data
+                    let fileInputElement = document.getElementById('id_product_image');
+                    // Make a new cropped image file using that blob object, image_data.name will make the new file name same as original image
+                    let file = new File([blob], img_data.name, { type: "image/*", lastModified: new Date().getTime() });
+                    // Create a new container
+                    let container = new DataTransfer();
+                    // Add the cropped image file to the container
+                    container.items.add(file);
+                    // Replace the original image file with the new cropped image file
+                    fileInputElement.files = container.files;
+                    console.log(container.files[0])
+                    let img = container.files[0]
+                    const url = URL.createObjectURL(img)
+                    document.getElementById('image1').src = url
+
+
+
+
+                    // Hide the cropper box
+                    document.getElementById('image-box').style.display = 'none'
+                    // Hide the crop button
+                    document.getElementById('crop-btn').style.display = 'none'
+                    // Display the Post button
+                    document.getElementById('confirm-btn').style.display = 'block'
+
+                });
+            });
+        }
+    })
+</script>
+
+<script>
+    const imagebox1 = document.getElementById('image-box')
+    // crop-btn is the id of button that will trigger the event of change original file with cropped file.
+    const crop_btn1 = document.getElementById('crop-btn')
+    // id_image is the id of the input tag where we will upload the image
+    const input1 = document.getElementById('id_product_image1')
+    var allowedExtensions =
+        /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+
+    var filePath = input1.value;
+
+    // When user uploads the image this event will get triggered
+    input1.addEventListener('change', () => {
+        if (!allowedExtensions.exec(input1.value)) {
+            Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: "Please add valid product!!",
+            })
+            input1.value = '';
+        }
+        else {
+            // Getting image file object from the input variable
+            const img_data = input1.files[0]
+            // createObjectURL() static method creates a DOMString containing a URL representing the object given in the parameter.
+            // The new object URL represents the specified File object or Blob object.
+            const url = URL.createObjectURL(img_data)
+
+            // Creating a image tag inside imagebox which will hold the cropping view image(uploaded file) to it using the url created before.
+            imagebox1.innerHTML = `<img src="${url}" id="image" style="width:100%;">`
+
+            // Storing that cropping view image in a variable
+            const image1 = document.getElementById('image')
+
+            // Displaying the image box
+            document.getElementById('image-box').style.display = 'block'
+            // Displaying the Crop buttton
+            document.getElementById('crop-btn').style.display = 'block'
+            // Hiding the Post button
+            document.getElementById('confirm-btn').style.display = 'none'
+
+            // Creating a croper object with the cropping view image
+            // The new Cropper() method will do all the magic and diplay the cropping view and adding cropping functionality on the website
+            // For more settings, check out their official documentation at https://github.com/fengyuanchen/cropperjs
+
+            const cropper = new Cropper(image1, {
+                autoCropArea: 1,
+                viewMode: 1,
+                scalable: false,
+                zoomable: false,
+                movable: false,
+                aspectRatio: 1 / 1,
+                //  preview: '.preview',
+                minCropBoxWidth: 200,
+                minCropBoxHeight: 200,
+            })
+
+            // When crop button is clicked this event will get triggered
+            crop_btn.addEventListener('click', () => {
+                // This method coverts the selected cropped image on the cropper canvas into a blob object
+                cropper.getCroppedCanvas().toBlob((blob) => {
+
+                    // Gets the original image data
+                    let fileInputElement = document.getElementById('id_product_image1');
+                    // Make a new cropped image file using that blob object, image_data.name will make the new file name same as original image
+                    let file = new File([blob], img_data.name, { type: "image/*", lastModified: new Date().getTime() });
+                    // Create a new container
+                    let container = new DataTransfer();
+                    // Add the cropped image file to the container
+                    container.items.add(file);
+                    // Replace the original image file with the new cropped image file
+                    fileInputElement.files = container.files;
+                    console.log(container.files[0])
+                    let img = container.files[0]
+                    const url = URL.createObjectURL(img)
+                    document.getElementById('image2').src = url
+
+
+
+
+                    // Hide the cropper box
+                    document.getElementById('image-box').style.display = 'none'
+                    // Hide the crop button
+                    document.getElementById('crop-btn').style.display = 'none'
+                    // Display the Post button
+                    document.getElementById('confirm-btn').style.display = 'block'
+
+                });
+            });
+        }
+    })
+</script>
+
+<script>
+    const imagebox2 = document.getElementById('image-box')
+    // crop-btn is the id of button that will trigger the event of change original file with cropped file.
+    const crop_btn2 = document.getElementById('crop-btn')
+    // id_image is the id of the input tag where we will upload the image
+    const input2 = document.getElementById('id_product_image2')
+    var allowedExtensions =
+        /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+
+    var filePath = input2.value;
+
+    // When user uploads the image this event will get triggered
+    input2.addEventListener('change', () => {
+        if (!allowedExtensions.exec(input2.value)) {
+            Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: "Please add valid product!!",
+            })
+            input2.value = '';
+        }
+        else {
+            // Getting image file object from the input variable
+            const img_data = input2.files[0]
+            // createObjectURL() static method creates a DOMString containing a URL representing the object given in the parameter.
+            // The new object URL represents the specified File object or Blob object.
+            const url = URL.createObjectURL(img_data)
+
+            // Creating a image tag inside imagebox which will hold the cropping view image(uploaded file) to it using the url created before.
+            imagebox1.innerHTML = `<img src="${url}" id="image" style="width:100%;">`
+
+            // Storing that cropping view image in a variable
+            const image2 = document.getElementById('image')
+
+            // Displaying the image box
+            document.getElementById('image-box').style.display = 'block'
+            // Displaying the Crop buttton
+            document.getElementById('crop-btn').style.display = 'block'
+            // Hiding the Post button
+            document.getElementById('confirm-btn').style.display = 'none'
+
+            // Creating a croper object with the cropping view image
+            // The new Cropper() method will do all the magic and diplay the cropping view and adding cropping functionality on the website
+            // For more settings, check out their official documentation at https://github.com/fengyuanchen/cropperjs
+
+            const cropper = new Cropper(image2, {
+                autoCropArea: 1,
+                viewMode: 1,
+                scalable: false,
+                zoomable: false,
+                movable: false,
+                aspectRatio: 1 / 1,
+                //  preview: '.preview',
+                minCropBoxWidth: 200,
+                minCropBoxHeight: 200,
+            })
+
+            // When crop button is clicked this event will get triggered
+            crop_btn.addEventListener('click', () => {
+                // This method coverts the selected cropped image on the cropper canvas into a blob object
+                cropper.getCroppedCanvas().toBlob((blob) => {
+
+                    // Gets the original image data
+                    let fileInputElement = document.getElementById('id_product_image2');
+                    // Make a new cropped image file using that blob object, image_data.name will make the new file name same as original image
+                    let file = new File([blob], img_data.name, { type: "image/*", lastModified: new Date().getTime() });
+                    // Create a new container
+                    let container = new DataTransfer();
+                    // Add the cropped image file to the container
+                    container.items.add(file);
+                    // Replace the original image file with the new cropped image file
+                    fileInputElement.files = container.files;
+                    console.log(container.files[0])
+                    let img = container.files[0]
+                    const url = URL.createObjectURL(img)
+                    document.getElementById('image3').src = url
+
+
+
+
+                    // Hide the cropper box
+                    document.getElementById('image-box').style.display = 'none'
+                    // Hide the crop button
+                    document.getElementById('crop-btn').style.display = 'none'
+                    // Display the Post button
+                    document.getElementById('confirm-btn').style.display = 'block'
+
+                });
+            });
+        }
+    })
+</script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
+{% endblock content %}

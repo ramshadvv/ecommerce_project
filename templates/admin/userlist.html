@@ -1,0 +1,97 @@
+{% extends 'admin/adminbase.html' %}
+
+{% block content%}
+<body id="page-top">
+    <div class="container me-5 float-left">
+      <div class="text-center p-5">
+          <h1>USERS</h1>
+      </div>
+  <table id ="example" class="table">
+      <thead>
+        <tr>
+          <th scope="col">User_ID</th>
+          <th scope="col">Username</th>
+          <th scope="col">Email</th>
+          <th scope="col">Phone</th>
+          <th scope="col">Status</th>
+          <th style="width: 60px!important;"></th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for i in data %}
+          {% if i.username != 'admin' %}
+          <tr>
+              <td>{{ forloop.counter }}</td>
+              <th scope="row">{{ i.username }}</th>
+              <td>{{ i.email }}</td>
+              <td>{{ i.phone }}</td>
+              <td>{{ i.is_active }}</td>
+              {% if i.is_active %}
+              <td> <form action="{% url 'blockuser' i.id %}"method="POST">
+                {% csrf_token %}
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-outline-danger px-4" data-bs-toggle="modal" data-bs-target="#blockuser-{{ i.id }}">
+                  Block
+                </button>
+  
+                <!-- Modal -->
+                <div class="modal fade" id="blockuser-{{ i.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Confirm</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p>Do you want to unblock  {{ i.username }}</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a href="{% url 'blockuser' i.id %}"><button type="button" class="btn btn-danger">Confirm</button></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </form>
+              </td>
+              {% else %}
+              <td> <form action="{% url 'blockuser' i.id %}"method="POST">
+                {% csrf_token %}
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-outline-primary px-3" data-bs-toggle="modal" data-bs-target="#blockuser-{{ i.id }}">
+                  Unblock
+                </button>
+  
+                <!-- Modal -->
+                <div class="modal fade" id="blockuser-{{ i.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p>Do you want to unblock {{ i.username }}</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a href="{% url 'blockuser' i.id %}"><button type="button" class="btn btn-success">Confirm</button></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </form>
+              </td>
+              {% endif %}
+          </tr>
+          {% endif %}
+          {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  
+
+</body>
+
+{% endblock content%}
