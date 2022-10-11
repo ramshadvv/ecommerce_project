@@ -165,8 +165,9 @@ def user_login(request):
             if user is not None and data.username != 'admin':
                 request.session['user_id'] = username
                 session_key = request.session.session_key
-                if Order.objects.filter(guest_user = session_key):
-                    order_guest_qs = Order.objects.get(guest_user = session_key)
+                if Order.objects.filter(guest_user = session_key, orderd = False):
+                    order_guest_qs = Order.objects.filter(guest_user = session_key, orderd = False)
+                    order_guest_qs = order_guest_qs[0]
                     item           = Accounts.object.get(username = username)
                     id             = item.id
                     order_qs       = Order.objects.filter(user_id= id, orderd = False)
@@ -1044,7 +1045,7 @@ def myorders(request):
         'order' : order_qs
     }
     else:
-        return render(request,'user/cartempty.html')
+        return render(request,'user/orderempty.html')
     return render(request, 'user/order.html', context)
 
 

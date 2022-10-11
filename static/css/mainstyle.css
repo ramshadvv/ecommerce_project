@@ -121,6 +121,9 @@ table th {
 }
 
 @media screen and (max-width: 1000px) {
+    .razorpay-payment-button{
+        padding: 10px 65px !important;
+    }
     #div-card{
         width: 21rem;
         height: 24rem;

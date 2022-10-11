@@ -1,0 +1,21 @@
+{% extends 'user/userbase.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="container pt-5">
+    <h1 class="text-center ">MY ORDERS</h1>
+    <div class="container pt-5">
+        <div class="text-center">
+            <h2>My orders is Empty!!</h1><br>
+            <p>Please make a <b>Order</b></p>
+            <p class=""><a href="{% url 'home' %}" class="btn btn-success">Go Shop</a></p>
+        </div>
+    </div>
+</div><br><br>
+
+
+
+
+    {% endblock content %}
