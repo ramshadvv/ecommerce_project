@@ -2,7 +2,25 @@
 
 {% block content%}
 {% load static %}
-
+<head>
+  
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<!-- <script>
+  console.log('hhh')
+  $('#date1').datepicker({
+    changeMonth: true,
+    changeYear: true,
+    showButtonPanel: true,
+    dateFormat: "yy/m/d",
+    minDate: new Date(),
+});
+  // $( function() {
+  //   $( "#datepicker" ).datepicker();
+  // } );
+</script> -->
+</head>
 <body id="page-top">
     <div class="container me-5 float-left">
         <div class="text-center p-5">
@@ -14,9 +32,9 @@
           <h4 class="text-light py-2">SORT WITH DATE</h4>
           <form action="{% url 'sort_with_date' %}">
             <label for="date" class="text-light">From</label>
-            <input type="date" name="date" id="date">
+            <input type="date" name="date" id="in">
             <label for="date" class="text-light">To</label>
-            <input type="date" name="todate" id="todate">
+            <input type="date" name="todate" id="out">
             <button class="btn btn-primary btn-lg">Find</button>
             <label for="month" class="text-light ms-5">Month</label>
             <input type="month" name="month" id="month">
@@ -32,8 +50,8 @@
             <table id ="example"  class="table table-bordered table-dark" style="width:100%">
                 <thead>
                   <tr>
-                    <th  scope="col" class="border border-dark " style="color:white;">No:</th>
-                    <th  scope="col" class="border border-dark " style="color:white;">Customer</th>
+                    <th scope="col" class="border border-dark" style="color:white;">No:</th>
+                    <th scope="col" class="border border-dark" style="color:white;">Customer</th>
                     <th scope="col" class="border border-dark" style="color:white;">Product Name</th>
                     <th scope="col" class="border border-dark" style="color:white;">Category  Name</th>
                     <th scope="col" class="border border-dark" style="color:white;">Quantity</th>
@@ -134,7 +152,26 @@
       }
   };
 </script>
+<script>
+  $(function() {
+    // Get tomorrow 
+    var tomorrow = new Date();
+    tomorrow.setDate(new Date().getDate() + 1);
 
+    $("#in").datepicker({
+      minDate: tomorrow,
+      onSelect: function(dateText, inst) {
+        // Get the selected date
+        var inDate = new Date($(this).val());
+        $("#out").datepicker('option', 'minDate', inDate);
+      }
+    });
+    $('#out').datepicker({
+      minDate: tomorrow
+    })
+  });
+</script>
 </body>
+
 
 {% endblock content%}

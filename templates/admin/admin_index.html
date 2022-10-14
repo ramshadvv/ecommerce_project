@@ -202,14 +202,14 @@
   </script>
 
 <script>
-  var xValues = ["Total Users", "Inactiveuser", "Active users"];
-  var yValues = ['{{cancel_order}}', '{{delivered_order}}', '{{order_count}}'];
+  var xValues = ["Inactiveuser", "Active users","Total Users"];
+  var yValues = ['{{inactive_user}}', '{{active_user}}', '{{customer_count}}'];
   var barColors = ['#FF0000', '#008000', '#36b9cc'];
   
   new Chart("myPieChart_user", {
     type: "pie",
     data: {
-      labels:["Cancel Orders", "Delivered Orders", "Total orders"],
+      labels:["Inactiveuser", "Active users", "Total Users"],
       datasets: [{
         backgroundColor: barColors,
         data: yValues

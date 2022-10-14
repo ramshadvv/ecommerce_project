@@ -1,15 +1,15 @@
 from datetime import datetime
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from accounts.models import Accounts
-from django.contrib.auth import authenticate, login, logout
-from django.contrib import messages
-from django.db.models import Q
-from productapp.models import Category, Coupen, Product
-from cartapp.models import  Order
-from datetime import datetime
+
 import xlwt
-from django.db.models import Sum
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.db.models import Q, Sum
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+
+from accounts.models import Accounts
+from cartapp.models import Order
+from productapp.models import Category, Coupen, Product
 
 # Create your views here.
 
@@ -22,7 +22,7 @@ def home(request):
         order           = Order.objects.filter(orderd=True)
         year            = str(datetime.now().date())
         year            = year.split('-')
-        total_earnings  = Order.objects.filter(orderd=True, status="Delivered", date_delivered__year = year[0])
+        total_earnings  = Order.objects.filter(orderd=True, status="Delivered", date_delivered__month = year[1])
         order_count     = order.count()
         cancel_order    = Order.objects.filter(status ='Canceled').count()  
         delivered_order = Order.objects.filter(status ='Delivered').count()
@@ -74,8 +74,6 @@ def products(request):
         return redirect(admin_login)
 
 
-
-
 def product_add(request):
     if 'admin_id' in request.session:
         value = Category.objects.all()
@@ -96,9 +94,19 @@ def product_add(request):
                 image2 = request.FILES['uploadFromPC2']
             except:
                 print('please add an image!!')
+
+            print(price)
+            
             if product_name == '' or description =='' or price=='' or stock==''or category_name == '' or brand=='' or image=='' or image1=='' or image2 == '':
                 messages.error(request,'All fields are required', extra_tags='productadderror')
                 return redirect(product_add)
+            elif int(price)<0 or int(stock)<0:
+                messages.error(request,'Negative number is not supportted for price and stock', extra_tags='productadderror')
+                return redirect(product_add)
+            elif category_name == 'Select One':
+                messages.error(request,'Please select a category', extra_tags='productadderror')
+                return redirect(product_add)
+            
             if image == None:
                 return redirect(product_add)
             product_status = request.POST['product_status']
@@ -143,6 +151,13 @@ def product_edit(request, id):
             if product_name == '' or description =='' or price=='' or stock==''or category_name == '' or brand=='':
                 messages.error(request,'All fields are required')
                 return redirect('/admin/editproduct/'+str(id))
+            elif int(price)<0 or int(stock)<0:
+                messages.error(request,'Negative number is not supportted for price and stock', extra_tags='productadderror')
+                return redirect('/admin/editproduct/'+str(id))
+            elif category_name == 'Select One':
+                messages.error(request,'Please select a category', extra_tags='productadderror')
+                return redirect('/admin/editproduct/'+str(id))
+            
             item.product_name = request.POST['product_name']
             item.description = request.POST['description']
             item.price = request.POST['price']
@@ -290,15 +305,16 @@ def offer_category_delete(request, id):
 def category_add(request):
     if 'admin_id' in request.session:
         if request.method == 'POST':
-            if Category.objects.filter(category_name = request.POST['category_name']):
+            category_name = str(request.POST['category_name'])
+            category_name = category_name.upper()
+            description = request.POST['description']
+            if Category.objects.filter(category_name = category_name):
                 messages.error(request,'Category already exists!!',extra_tags='categoryerror')
                 return redirect(category_add)
-            elif request.POST['category_name'] == '':
+            elif request.POST['category_name'] == '' or request.POST['description'] == '':
                 messages.error(request,'Categoryname must not be empty!!', extra_tags='categoryerror')
                 return redirect(category_add)
             else:
-                category_name = request.POST['category_name']
-                description = request.POST['description']
                 item = Category.objects.create(
                     category_name=category_name,
                     description=description
@@ -316,7 +332,7 @@ def category_edit(request, id):
             if Category.objects.filter(category_name = request.POST['category_name']) and request.POST['category_name']!= item.category_name:
                 messages.error(request,'Category already exists!!',extra_tags='categoryerror')
                 return render(request, 'admin/categoryedit.html', {'data':item})
-            elif request.POST['category_name'] == '':
+            elif request.POST['category_name'] == '' or request.POST['description'] == '':
                 messages.error(request,'Categoryname must not be empty!!', extra_tags='categoryerror')
                 return render(request, 'admin/categoryedit.html', {'data':item})
             else:
@@ -566,3 +582,4 @@ def sort_with_date(request):
     else:
         messages.error(request, 'Only admin can access')
         return redirect(admin_login)
+

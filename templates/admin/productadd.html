@@ -23,13 +23,13 @@
                     </div>
                     <div class="form-group col-md-6 my-3">
                         <label for="inputprice" class="fw-bold">Price</label>
-                        <input type="text" class="form-control mt-1" id="price" name="price" placeholder="price">
+                        <input type="number" class="form-control mt-1" id="price" name="price" placeholder="price">
 
 
                     </div>
                     <div class="form-group col-md-6 my-3">
                         <label for="inputstock" class="fw-bold">stock</label>
-                        <input type="text" class="form-control mt-1" id="stock" name="stock" placeholder="stock">
+                        <input type="number" class="form-control mt-1" id="stock" name="stock" placeholder="stock">
                     </div>
                     <div class="form-group col-md-6 my-3">
                         <label for="inputname" class="fw-bold">Select Category</label>
@@ -74,10 +74,10 @@
             </form>
 
             <div class="mt-5">
-                <img id="image1" src="" alt="">
-                <img id="image2" src="" alt="">
-                <img id="image3" src="" alt="">
-                <div class="col-md-5">
+                <img id="image1" src="" alt="" style="width: 16rem; border: 1px solid #959090; margin-right: 30px;">
+                <img id="image2" src="" alt="" style="width: 16rem; border: 1px solid #959090; margin-right: 30px;">
+                <img id="image3" src="" alt="" style="width: 16rem; border: 1px solid #959090; margin-right: 30px;">
+                <div class="col-md-5 mt-5">
                     <div class="form-group">
                         <div id="image-box" class="img-fluid"></div>
                         <button class="btn btn-outline-info" id="crop-btn" style=" margin-top: 10px; display: none;"
@@ -104,7 +104,7 @@
     // id_image is the id of the input tag where we will upload the image
     const input = document.getElementById('id_product_image')
     var allowedExtensions =
-        /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+        /(\.jpg|\.jpeg|\.png|\.gif|\.tiff|\.psd|\.raw|\.apng|\.avif|\.jfif|\.pjpeg|\.pjp|\.svg|\.webp)$/i;
 
     var filePath = input.value;
 
@@ -197,7 +197,7 @@
     // id_image is the id of the input tag where we will upload the image
     const input1 = document.getElementById('id_product_image1')
     var allowedExtensions =
-        /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+        /(\.jpg|\.jpeg|\.png|\.gif|\.tiff|\.psd|\.raw|\.apng|\.avif|\.jfif|\.pjpeg|\.pjp|\.svg|\.webp)$/i;
 
     var filePath = input1.value;
 
@@ -290,7 +290,7 @@
     // id_image is the id of the input tag where we will upload the image
     const input2 = document.getElementById('id_product_image2')
     var allowedExtensions =
-        /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+        /(\.jpg|\.jpeg|\.png|\.gif|\.tiff|\.psd|\.raw|\.apng|\.avif|\.jfif|\.pjpeg|\.pjp|\.svg|\.webp)$/i;
 
     var filePath = input2.value;
 

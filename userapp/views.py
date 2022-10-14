@@ -1,21 +1,22 @@
-from datetime import datetime
 import json
+import os
 import re
-from django.shortcuts import render, redirect
+from datetime import datetime
+
+import razorpay
+from decouple import config
+from django.contrib import messages
+from django.contrib.auth import authenticate
+from django.db.models import Q
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from twilio.rest import Client
+
 from accounts.models import Accounts, CustomerAdress
 from adminapp.models import Trial
-from django.contrib.auth import authenticate
-from django.contrib import messages
-from cartapp.models import CartItem, Order, MyWishList
+from cartapp.models import CartItem, MyWishList, Order
 from productapp.models import Category, Coupen, Product
-from django.db.models import Q
-import os
-from decouple import config
-from twilio.rest import Client
-import razorpay
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_protect, csrf_exempt
-
 
 number=''
 
@@ -24,6 +25,8 @@ number=''
 
 
 def home(request):
+    if not request.session.session_key:
+        request.session.save()
     if 'user_id' in request.session:
         if 'search' in request.GET:
             sh          = request.GET['search']
@@ -849,6 +852,7 @@ def changeQuantity(request):
     else:
         item.quantity -= 1
     item.save()
+    item  = CartItem.objects.get(id=id)
     return JsonResponse('success', safe = False) 
 
 
