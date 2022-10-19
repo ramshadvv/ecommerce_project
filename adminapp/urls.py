@@ -33,6 +33,6 @@ urlpatterns = [
     path('editstatus/<int:id>/', views.edit_status_View, name='editstatus'),
     path('cancelstatus/<int:id>/', views.cancel_status_view, name='cancelstatus'),
     path('salesreport/', views.salesreport, name='salesreport'),
-    path('export_as_excel/', views.export_as_excel, name='export_as_excel'),
+    path('export_as_excel/<str:value>/<str:tovalue>/<str:state>/', views.export_as_excel, name='export_as_excel'),
     path('sort_with_date/', views.sort_with_date, name='sort_with_date'),
 ]

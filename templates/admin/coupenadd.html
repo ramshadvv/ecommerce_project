@@ -1,5 +1,15 @@
 {% extends 'admin/adminbase.html' %}
 {% block content%}
+<head>
+    <style>
+        th.prev.available{
+          background-color: #fff;
+        }
+        th.next.available{
+          background-color: #fff;
+        }
+    </style>
+</head>
 <body id="page-top">
     <div class="col-md-10">
 <div class="container pt-5 pb-5 ">
@@ -18,7 +28,7 @@
             </div>
             <div class="form-group col-md-12 mb-3">
                 <label for="inputemail"class="fw-bold">Expiry Date</label>
-                <input type="date" class="form-control mt-1" id="expiry_date" name="expiry_date" placeholder="expiry date">
+                <input type="text" class="form-control mt-1" id="expiry_date" name="expiry_date" placeholder="expiry date">
             </div>
             {% for message in messages %}
             <p><span class="text-danger">{{message}}</span></p>
@@ -32,5 +42,18 @@
 </div>
 </div>
 </body>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<script>
+    $('input[name="expiry_date"]').daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        minYear: 1901,
+        minDate: new Date(),
+        maxYear: parseInt(moment().format('YYYY'),10)
+    });
+</script>
 
 {% endblock content%}

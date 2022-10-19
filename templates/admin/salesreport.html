@@ -3,23 +3,42 @@
 {% block content%}
 {% load static %}
 <head>
-  
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-<!-- <script>
-  console.log('hhh')
-  $('#date1').datepicker({
-    changeMonth: true,
-    changeYear: true,
-    showButtonPanel: true,
-    dateFormat: "yy/m/d",
-    minDate: new Date(),
-});
-  // $( function() {
-  //   $( "#datepicker" ).datepicker();
-  // } );
-</script> -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+
+  <style>
+    th.prev.available{
+      background-color: #fff;
+    }
+    th.next.available{
+      background-color: #fff;
+    }
+  .drp-calendar.left thead>tr:nth-child(2) {
+      display: none;
+  }
+
+  .drp-calendar.left tbody {
+      display: none;
+  }
+
+  .daterangepicker.ltr .ranges,
+  .daterangepicker.ltr .drp-calendar {
+      float: none !important;
+  }
+
+  .daterangepicker .drp-calendar.right .daterangepicker_input {
+      position: absolute;
+      top: 45px;
+      left: 8px;
+      width: 230px;
+  }
+
+  .drp-calendar.left .drp-calendar-table {
+      margin-top: 45px;
+  }
+</style>
 </head>
 <body id="page-top">
     <div class="container me-5 float-left">
@@ -27,14 +46,20 @@
             <h1>SALES REPORT</h1>
         </div>
         <button class="btn btn-primary btn-lg ml-3 mb-3" id="download-pdf">Download as Pdf</button>
-        <a href=" {% url 'export_as_excel' %}" class="btn btn-primary btn-lg ml-3 mb-3"> Download as Excel</a></span>
+        {% if date != None and todate != None %}
+        <a href=" {% url 'export_as_excel' date todate 'date' %}" class="btn btn-primary btn-lg ml-3 mb-3"> Download as Excel</a></span>
+        {% elif month != None %}
+        <a href=" {% url 'export_as_excel' month None 'month' %}" class="btn btn-primary btn-lg ml-3 mb-3"> Download as Excel</a></span>
+        {% elif year != None %}
+        <a href=" {% url 'export_as_excel' year None 'year' %}" class="btn btn-primary btn-lg ml-3 mb-3"> Download as Excel</a></span>
+        {% else %}
+        <a href=" {% url 'export_as_excel' None None 'all' %}" class="btn btn-primary btn-lg ml-3 mb-3"> Download as Excel</a></span>
+        {% endif %}
         <div class="my-3">
           <h4 class="text-light py-2">SORT WITH DATE</h4>
           <form action="{% url 'sort_with_date' %}">
-            <label for="date" class="text-light">From</label>
-            <input type="date" name="date" id="in">
-            <label for="date" class="text-light">To</label>
-            <input type="date" name="todate" id="out">
+            <label for="date" class="text-light">Date</label>
+            <input type="text" name="daterangenew" value="...">
             <button class="btn btn-primary btn-lg">Find</button>
             <label for="month" class="text-light ms-5">Month</label>
             <input type="month" name="month" id="month">
@@ -46,6 +71,7 @@
             <button class="btn btn-primary btn-lg">Find</button>
           </form>
         </div>
+        
         <div>
             <table id ="example"  class="table table-bordered table-dark" style="width:100%">
                 <thead>
@@ -121,6 +147,15 @@
           </div>
     </div>
 </div>
+
+
+
+<script>
+  $('input[name="daterangenew"]').daterangepicker({
+    maxDate: new Date()
+  });
+</script>
+
 <script type="text/javascript">
     document.getElementById('download-pdf').onclick = function(){
         var element  = document.getElementById('example')
@@ -152,25 +187,18 @@
       }
   };
 </script>
+
+<!-- 
 <script>
   $(function() {
-    // Get tomorrow 
-    var tomorrow = new Date();
-    tomorrow.setDate(new Date().getDate() + 1);
-
-    $("#in").datepicker({
-      minDate: tomorrow,
-      onSelect: function(dateText, inst) {
-        // Get the selected date
-        var inDate = new Date($(this).val());
-        $("#out").datepicker('option', 'minDate', inDate);
-      }
+    $('input[name="daterange"]').daterangepicker({
+      maxDate: new Date()
+    }, function (start, end, label) {
+      console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
     });
-    $('#out').datepicker({
-      minDate: tomorrow
-    })
   });
-</script>
+</script> -->
+
 </body>
 
 

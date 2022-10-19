@@ -429,6 +429,7 @@ def coupenAdd(request):
             coupen_code  = request.POST['coupen-code']
             coupen_price = request.POST['coupen-price']
             expiry_date  = request.POST['expiry_date']
+            expiry_date  = datetime.strptime(expiry_date, '%m/%d/%Y').strftime('%Y-%m-%d')
             if coupen_code == '' or coupen_price == '' or expiry_date == '':
                 messages.error(request, 'Code and price is mustnot be empty!!')
                 return redirect(coupenAdd)
@@ -528,7 +529,7 @@ def salesreport(request):
         messages.error(request, 'Only admin can access')
         return redirect(admin_login)
 
-def export_as_excel(request):
+def export_as_excel(request, value, tovalue, state):
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment;filename=SalesReport' +\
         str(datetime.now())+'.xls'
@@ -541,8 +542,15 @@ def export_as_excel(request):
     for col_num in range(len(columns)):
             ws.write(row_num, col_num, columns[col_num], font_style)
     font_style = xlwt.XFStyle()
-    rows = Order.objects.filter(orderd=True).values_list(
-      'user__username','payment_method',  'date_ordered', 'total_price')
+    if value != None and tovalue != None and state == 'date':
+        print('hello')
+        rows = Order.objects.filter(orderd=True, date_ordered__lte = tovalue, date_ordered__gte = value).values_list('user__username','payment_method',  'date_ordered', 'total_price')
+    elif value != None and tovalue == None and state == 'month':
+        rows = Order.objects.filter(orderd=True, date_ordered__month = value[1], date_ordered__year = value[0]).values_list('user__username','payment_method',  'date_ordered', 'total_price')
+    elif value != None and tovalue == None and state == 'year':
+        rows = Order.objects.filter(orderd=True, date_ordered__year = value).values_list('user__username','payment_method',  'date_ordered', 'total_price')
+    else:
+        rows = Order.objects.filter(orderd=True).values_list('user__username','payment_method',  'date_ordered', 'total_price')
     for row in rows:
         row_num += 1
         for col_num in range(len(row)):
@@ -554,11 +562,21 @@ def export_as_excel(request):
 def sort_with_date(request):
     if 'admin_id' in request.session:
         if request.method == 'GET':
-            date = request.GET['date']
-            todate = request.GET['todate']
+            date_ls = request.GET['daterangenew']
+            date    = ''
+            todate  = ''
             month = request.GET['month']
             month = month.split('-')
             year  = request.GET['year']
+            if month ==  [''] and year=='Select':
+                print('hey')
+                date_ls = date_ls.split(' - ')
+                date = date_ls[0]
+                date = datetime.strptime(date, '%m/%d/%Y').strftime('%Y-%m-%d')
+                todate = date_ls[1]
+                todate = datetime.strptime(todate, '%m/%d/%Y').strftime('%Y-%m-%d')
+            
+            context = {}
             if (date == '' or todate ==  '') and month ==  [''] and year=='Select':
                 print('Select any option')
                 messages.error(request, 'please enter an input!!')
@@ -566,16 +584,27 @@ def sort_with_date(request):
             else:
                 if date != '' and  todate != '':
                     items = Order.objects.filter(orderd = True, date_ordered__lte = todate, date_ordered__gte = date)
+                    context={
+                        'date':date,
+                        'todate':todate,
+                        'items':items
+                    }
                 elif month != ['']:
                     items = Order.objects.filter(orderd = True, date_ordered__month = month[1], date_ordered__year = month[0] )
+                    context = {
+                        'month':month,
+                        'items':items
+                    }
                 elif year != 'Select':
                     items = Order.objects.filter(orderd = True, date_ordered__year = year)
+                    context = {
+                        'year':year,
+                        'items':items
+                    }
                 else:
                     print('fail')
                     return redirect(salesreport)
-                context = {
-                    'items':items
-                }
+                print(year)
                 return render(request, 'admin/salesreport.html', context)
         else:
             return redirect(salesreport)
